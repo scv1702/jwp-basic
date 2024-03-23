@@ -78,4 +78,8 @@ public class User {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "[userId=" + userId + ", name=" + name + ", email=" + email + "]";
+    }
 }
