@@ -7,6 +7,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import next.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,14 @@ public class UpdateUserServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        User user = DataBase.findUserById(req.getParameter("userId"));
+        String userId = req.getParameter("userId");
+        User loginUser = (User) req.getSession().getAttribute("user");
+        if (!userId.equals(loginUser.getUserId())) {
+            log.debug("user update failed. userId : {}, loginUser : {}", userId, loginUser);
+            resp.sendRedirect("/user/list");
+            return;
+        }
+        User user = DataBase.findUserById(userId);
         user.setName(req.getParameter("name"));
         user.setPassword(req.getParameter("password"));
         user.setEmail(req.getParameter("email"));
