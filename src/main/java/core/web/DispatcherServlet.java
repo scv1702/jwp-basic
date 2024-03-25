@@ -1,6 +1,7 @@
 package core.web;
 
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -18,7 +19,8 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        handlerMapping = new RequestMappingHandlerMapping(ComponentScanner.scan());
+        ServletContext servletContext = config.getServletContext();
+        handlerMapping = (RequestMappingHandlerMapping) servletContext.getAttribute("handlerMapping");
     }
 
     @Override

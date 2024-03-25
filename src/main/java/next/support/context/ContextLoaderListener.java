@@ -1,5 +1,9 @@
 package next.support.context;
 
+import core.web.ComponentScanner;
+import core.web.RequestMappingHandlerMapping;
+import java.util.Map;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
@@ -21,6 +25,11 @@ public class ContextLoaderListener implements ServletContextListener {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScript(new ClassPathResource("jwp.sql"));
         DatabasePopulatorUtils.execute(populator, ConnectionManager.getDataSource());
+
+        ServletContext servletContext = sce.getServletContext();
+        Map<String, Object> components = ComponentScanner.scan();
+        servletContext.setAttribute("components", components);
+        servletContext.setAttribute("handlerMapping", new RequestMappingHandlerMapping(components));
 
         logger.info("Completed Load ServletContext!");
     }
