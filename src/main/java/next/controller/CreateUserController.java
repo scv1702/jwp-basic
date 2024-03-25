@@ -2,9 +2,8 @@ package next.controller;
 
 import core.db.DataBase;
 import core.web.Controller;
-import core.web.GetMapping;
-import core.web.PostMapping;
 import core.web.RequestMapping;
+import core.web.RequestMethod;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import next.model.User;
@@ -17,12 +16,12 @@ public class CreateUserController {
 
     private static final Logger log = LoggerFactory.getLogger(CreateUserController.class);
 
-    @GetMapping(value = "/form")
+    @RequestMapping(value = "/form")
     public String userForm(HttpServletRequest req, HttpServletResponse res) {
         return "/user/form";
     }
 
-    @PostMapping(value = "/create")
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String createUser(HttpServletRequest req, HttpServletResponse res) {
         User user = new User(req.getParameter("userId"),
             req.getParameter("password"),

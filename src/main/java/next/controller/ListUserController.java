@@ -2,7 +2,6 @@ package next.controller;
 
 import core.db.DataBase;
 import core.web.Controller;
-import core.web.GetMapping;
 import core.web.RequestMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/users")
 public class ListUserController {
 
-    @GetMapping("/list")
+    @RequestMapping("/list")
     public String list(HttpServletRequest req, HttpServletResponse res) {
         if (!UserSessionUtils.isLogined(req.getSession())) {
             return "redirect:/users/loginForm";

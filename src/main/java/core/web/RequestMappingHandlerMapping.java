@@ -81,35 +81,13 @@ public class RequestMappingHandlerMapping {
         for (Object controller : controllers) {
             Method[] methods = controller.getClass().getDeclaredMethods();
             for (Method method : methods) {
-                String mappingUri = "";
-                RequestMethod requestMethod = null;
-
-                for (Annotation annotation : method.getDeclaredAnnotations()) {
-                    if (annotation.annotationType() == GetMapping.class) {
-                        GetMapping getMapping = method.getAnnotation(GetMapping.class);
-                        mappingUri = getMapping.value();
-                        requestMethod = RequestMethod.GET;
-                        break;
-                    } else if (annotation.annotationType() == PostMapping.class) {
-                        PostMapping getMapping = method.getAnnotation(PostMapping.class);
-                        mappingUri = getMapping.value();
-                        requestMethod = RequestMethod.POST;
-                        break;
-                    } else if (annotation.annotationType() == RequestMapping.class) {
-                        RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                        mappingUri = requestMapping.value();
-                        requestMethod = requestMapping.method();
-                        break;
-                    }
-                }
-
-                if (mappingUri.isEmpty() || requestMethod == null) {
+                RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+                if (requestMapping == null) {
                     continue;
                 }
-
-                String uri = getBaseRequestMappingValue(controller) + mappingUri;
+                String uri = getBaseRequestMappingValue(controller) + requestMapping.value();
                 requestMappingHandlers.put(
-                    new RequestMappingKey(uri, requestMethod),
+                    new RequestMappingKey(uri, requestMapping.method()),
                     new RequestMappingHandler(controller, method));
             }
         }

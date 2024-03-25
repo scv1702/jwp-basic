@@ -2,9 +2,8 @@ package next.controller;
 
 import core.db.DataBase;
 import core.web.Controller;
-import core.web.GetMapping;
-import core.web.PostMapping;
 import core.web.RequestMapping;
+import core.web.RequestMethod;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import next.model.User;
@@ -17,7 +16,7 @@ public class UpdateUserController {
 
     private static final Logger log = LoggerFactory.getLogger(UpdateUserController.class);
 
-    @GetMapping("/updateForm")
+    @RequestMapping(value = "/updateForm", method = RequestMethod.GET)
     public String updateForm(HttpServletRequest req, HttpServletResponse res) {
         String userId = req.getParameter("userId");
         User user = DataBase.findUserById(userId);
@@ -28,7 +27,7 @@ public class UpdateUserController {
         return "/user/updateForm";
     }
 
-    @PostMapping("/update")
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(HttpServletRequest req, HttpServletResponse res) {
         User user = DataBase.findUserById(req.getParameter("userId"));
         if (!UserSessionUtils.isSameUser(req.getSession(), user)) {

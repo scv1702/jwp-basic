@@ -2,9 +2,8 @@ package next.controller;
 
 import core.db.DataBase;
 import core.web.Controller;
-import core.web.GetMapping;
-import core.web.PostMapping;
 import core.web.RequestMapping;
+import core.web.RequestMethod;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -14,12 +13,12 @@ import next.model.User;
 @RequestMapping("/users")
 public class AuthController {
 
-    @GetMapping(value = "/loginForm")
+    @RequestMapping(value = "/loginForm")
     public String loginForm(HttpServletRequest req, HttpServletResponse res) {
         return "/user/login";
     }
 
-    @PostMapping(value = "/login")
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     public String login(HttpServletRequest req, HttpServletResponse res) {
         String userId = req.getParameter("userId");
         String password = req.getParameter("password");
@@ -40,7 +39,7 @@ public class AuthController {
         }
     }
 
-    @GetMapping(value = "/logout")
+    @RequestMapping(value = "/logout")
     public String logout(HttpServletRequest req, HttpServletResponse res) {
         HttpSession session = req.getSession();
         session.removeAttribute(UserSessionUtils.USER_SESSION_KEY);

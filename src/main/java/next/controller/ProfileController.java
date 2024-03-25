@@ -2,7 +2,6 @@ package next.controller;
 
 import core.db.DataBase;
 import core.web.Controller;
-import core.web.GetMapping;
 import core.web.RequestMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,7 +11,7 @@ import next.model.User;
 @RequestMapping("/users")
 public class ProfileController {
 
-    @GetMapping("/profile")
+    @RequestMapping("/profile")
     public String profile(HttpServletRequest req, HttpServletResponse res) {
         String userId = req.getParameter("userId");
         User user = DataBase.findUserById(userId);
