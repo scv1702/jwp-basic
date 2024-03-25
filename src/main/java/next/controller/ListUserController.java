@@ -1,29 +1,22 @@
 package next.controller;
 
 import core.db.DataBase;
-
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
+import core.web.Controller;
+import core.web.GetMapping;
+import core.web.RequestMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
-@WebServlet("/users")
-public class ListUserController extends HttpServlet {
-    private static final long serialVersionUID = 1L;
+@Controller
+@RequestMapping("/users")
+public class ListUserController {
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    @GetMapping("/list")
+    public String list(HttpServletRequest req, HttpServletResponse res) {
         if (!UserSessionUtils.isLogined(req.getSession())) {
-            resp.sendRedirect("/users/loginForm");
-            return;
+            return "redirect:/users/loginForm";
         }
-
         req.setAttribute("users", DataBase.findAll());
-
-        RequestDispatcher rd = req.getRequestDispatcher("/user/list.jsp");
-        rd.forward(req, resp);
+        return "/user/list";
     }
 }
