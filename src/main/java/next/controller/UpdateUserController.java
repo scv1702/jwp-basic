@@ -1,17 +1,15 @@
 package next.controller;
 
-import core.db.DataBase;
 import core.web.Controller;
 import core.web.RequestMapping;
 import core.web.RequestMethod;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import next.dao.UserDao;
 import next.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
 
 @Controller
@@ -23,7 +21,7 @@ public class UpdateUserController {
     @RequestMapping(value = "/updateForm", method = RequestMethod.GET)
     public String updateForm(HttpServletRequest req, HttpServletResponse res) {
         String userId = req.getParameter("userId");
-        User user = DataBase.findUserById(userId);
+        User user = userDao.findByUserId(userId);
         if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
             throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
         }
@@ -33,7 +31,7 @@ public class UpdateUserController {
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(HttpServletRequest req, HttpServletResponse res) throws SQLException {
-        User user = DataBase.findUserById(req.getParameter("userId"));
+        User user = userDao.findByUserId(req.getParameter("userId"));
         if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
             throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
         }

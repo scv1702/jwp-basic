@@ -1,6 +1,5 @@
 package next.controller;
 
-import core.db.DataBase;
 import core.web.Controller;
 import core.web.RequestMapping;
 import next.dao.UserDao;

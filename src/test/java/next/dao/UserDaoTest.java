@@ -14,6 +14,8 @@ import core.jdbc.ConnectionManager;
 import next.model.User;
 
 public class UserDaoTest {
+    UserDao userDao = new UserDao();
+
     @Before
     public void setup() {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
@@ -22,23 +24,39 @@ public class UserDaoTest {
     }
 
     @Test
-    public void crud() throws Exception {
+    public void create() {
         User expected = new User("userId", "password", "name", "javajigi@email.com");
-        UserDao userDao = new UserDao();
         userDao.insert(expected);
-        User actual = userDao.findByUserId(expected.getUserId());
-        assertEquals(expected, actual);
 
-        expected.update(new User("userId", "password2", "name2", "sanjigi@email.com"));
-        userDao.update(expected);
-        actual = userDao.findByUserId(expected.getUserId());
+        User actual = userDao.findByUserId(expected.getUserId());
         assertEquals(expected, actual);
     }
 
     @Test
-    public void findAll() throws Exception {
-        UserDao userDao = new UserDao();
+    public void update() {
+        User expected = new User("userId", "password", "name", "sanjigi@email.com");
+        userDao.insert(expected);
+
+        userDao.update(new User("userId", "password2", "name2", "sanjigi@email.com"));
+
+        User actual = userDao.findByUserId(expected.getUserId());
+        assertEquals("password2", actual.getPassword());
+        assertEquals("name2", actual.getName());
+    }
+
+    @Test
+    public void findAll() {
         List<User> users = userDao.findAll();
         assertEquals(1, users.size());
+    }
+
+    @Test
+    public void findByUserId() {
+        User expected = new User("userId", "password", "name", "sanjigi@email.com");
+        userDao.insert(expected);
+
+        User actual = userDao.findByUserId(expected.getUserId());
+
+        assertEquals(expected, actual);
     }
 }

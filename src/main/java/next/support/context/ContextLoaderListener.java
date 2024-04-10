@@ -1,20 +1,19 @@
 package next.support.context;
 
+import core.jdbc.ConnectionManager;
 import core.web.ComponentScanner;
 import core.web.RequestMappingHandlerMapping;
-import java.util.Map;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
-import core.jdbc.ConnectionManager;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
+import java.util.Map;
 
 @WebListener
 public class ContextLoaderListener implements ServletContextListener {
