@@ -6,14 +6,18 @@ import core.web.RequestMapping;
 import core.web.RequestMethod;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import next.dao.UserDao;
 import next.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.SQLException;
+
 @Controller
 @RequestMapping("/users")
 public class UpdateUserController {
-
+    private UserDao userDao = new UserDao();
     private static final Logger log = LoggerFactory.getLogger(UpdateUserController.class);
 
     @RequestMapping(value = "/updateForm", method = RequestMethod.GET)
@@ -28,7 +32,7 @@ public class UpdateUserController {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String update(HttpServletRequest req, HttpServletResponse res) {
+    public String update(HttpServletRequest req, HttpServletResponse res) throws SQLException {
         User user = DataBase.findUserById(req.getParameter("userId"));
         if (!UserSessionUtils.isSameUser(req.getSession(), user)) {
             throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
@@ -38,7 +42,7 @@ public class UpdateUserController {
             req.getParameter("name"),
             req.getParameter("email"));
         log.debug("Update User : {}", updateUser);
-        user.update(updateUser);
+        userDao.update(updateUser);
         return "redirect:/";
     }
 }
