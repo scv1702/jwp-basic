@@ -43,6 +43,11 @@ public class Question {
                 Objects.equals(countOfAnswer, question.countOfAnswer);
     }
 
+    @Override
+    public String toString() {
+        return "[questionId=" + questionId + ", writer=" + writer + ", title=" + title + ", contents=" + contents + ", createdDate=" + createdDate + ", countOfAnswer=" + countOfAnswer + "]";
+    }
+
     public Long getQuestionId() {
         return questionId;
     }
