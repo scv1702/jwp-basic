@@ -1,5 +1,8 @@
 package core.web;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -7,8 +10,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -33,12 +34,15 @@ public class DispatcherServlet extends HttpServlet {
 
             RequestMappingHandler handler = handlerMapping.getHandler(mappingURI, requestMethod);
 
-            String viewName = handler.handle(req, res);
+            String result = handler.handle(req, res);
 
-            if (viewName.startsWith("redirect:")) {
-                res.sendRedirect(viewName.substring("redirect:".length()));
+            if (handler.hasResponseBody()) {
+                res.addHeader("Content-Type", "application/json");
+                res.getWriter().write(result);
+            } else if (result.startsWith("redirect:")) {
+                res.sendRedirect(result.substring("redirect:".length()));
             } else {
-                req.getRequestDispatcher(viewName + ".jsp").forward(req, res);
+                req.getRequestDispatcher(result + ".jsp").forward(req, res);
             }
         } catch (Exception e) {
             logger.error("Failed to service", e);

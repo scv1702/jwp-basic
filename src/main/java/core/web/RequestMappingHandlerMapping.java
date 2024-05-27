@@ -1,7 +1,9 @@
 package core.web;
 
 import core.web.exception.NoRequestMappingHandlerException;
-import java.lang.annotation.Annotation;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -9,8 +11,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 class RequestMappingKey {
 
@@ -51,6 +51,10 @@ class RequestMappingHandler {
     public String handle(HttpServletRequest req, HttpServletResponse res)
         throws InvocationTargetException, IllegalAccessException {
         return (String) method.invoke(controller, req, res);
+    }
+
+    public boolean hasResponseBody() {
+        return method.isAnnotationPresent(ResponseBody.class);
     }
 
     @Override
