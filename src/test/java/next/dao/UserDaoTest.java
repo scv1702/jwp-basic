@@ -1,17 +1,16 @@
 package next.dao;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.List;
-
+import core.jdbc.ConnectionManager;
+import next.model.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
-import core.jdbc.ConnectionManager;
-import next.model.User;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 public class UserDaoTest {
     UserDao userDao = new UserDao();
@@ -34,12 +33,15 @@ public class UserDaoTest {
 
     @Test
     public void update() {
-        User expected = new User("userId", "password", "name", "sanjigi@email.com");
-        userDao.insert(expected);
+        User user = new User("userId", "password", "name", "sanjigi@email.com");
+        userDao.insert(user);
 
-        userDao.update(new User("userId", "password2", "name2", "sanjigi@email.com"));
+        user.setPassword("password2");
+        user.setName("name2");
 
-        User actual = userDao.findByUserId(expected.getUserId());
+        userDao.update(user);
+
+        User actual = userDao.findByUserId(user.getUserId());
         assertEquals("password2", actual.getPassword());
         assertEquals("name2", actual.getName());
     }

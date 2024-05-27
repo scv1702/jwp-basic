@@ -10,24 +10,23 @@ public class QuestionDao {
 
     public void insert(Question question) {
         jdbcTemplate.insert(
-        "INSERT INTO QUESTIONS VALUES (?, ?, ?, ?, ?, ?)",
-            question.getQuestionId(),
+            question,
+        "INSERT INTO QUESTIONS VALUES (NULL, ?, ?, ?, ?, ?)",
             question.getWriter(),
             question.getTitle(),
             question.getContents(),
-            question.getCreatedDate().toString(),
+            question.getCreatedDate(),
             question.getCountOfAnswer()
         );
     }
 
     public void update(Question question) {
         jdbcTemplate.update(
-        "UPDATE QUESTIONS SET questionId=?, writer=?, title=?, contents=?, createdDate=?, countOfAnswer=? WHERE questionId=?",
-            question.getQuestionId(),
+        "UPDATE QUESTIONS SET writer=?, title=?, contents=?, createdDate=?, countOfAnswer=? WHERE questionId=?",
             question.getWriter(),
             question.getTitle(),
             question.getContents(),
-            question.getCreatedDate().toString(),
+            question.getCreatedDate(),
             question.getCountOfAnswer(),
             question.getQuestionId()
         );

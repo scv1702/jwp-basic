@@ -27,7 +27,7 @@ public class JdbcTemplate {
         String sql, 
         Object... args
     ) throws SQLException {
-        PreparedStatement pstmt = conn.prepareStatement(sql);
+        PreparedStatement pstmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
         for (int i = 0; i < args.length; i++) {
             String value = args[i].toString();
             if (converters.containsKey(args[i].getClass())) {
@@ -38,17 +38,43 @@ public class JdbcTemplate {
         return pstmt;
     }
 
-    public void insert(String sql, Object... args) {
+    private void setId(Object model, Object id) {
+        Field field = Arrays.stream(model.getClass().getDeclaredFields())
+            .filter(f -> f.isAnnotationPresent(Id.class))
+            .findFirst()
+            .orElseThrow(() -> new IllegalStateException("No Id field"));
+        if (!field.isAnnotationPresent(GeneratedValue.class)) {
+            return;
+        }
+        field.setAccessible(true);
+        try {
+            //TODO: 현재 @Id 필드가 Long 타입이라고 가정. 자동 타입 형변환 추가 필요
+            field.set(model, id);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Object execute(String sql, Object... args) {
         try (Connection con = ConnectionManager.getConnection();
              PreparedStatement pstmt = createPreparedStatement(con, sql, args)) {
             pstmt.executeUpdate();
+            ResultSet rs = pstmt.getGeneratedKeys();
+            if (rs.next()) {
+                return rs.getObject(1);
+            }
+            return null;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
+    public void insert(Object model, String sql, Object... args) {
+        setId(model, execute(sql, args));
+    }
+
     public void update(String sql, Object... args) {
-        insert(sql, args);
+        execute(sql, args);
     }
 
     private <T> T createResult(

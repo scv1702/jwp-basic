@@ -23,21 +23,24 @@ public class QuestionDaoTest {
 
     @Test
     public void create() {
-        Question expected = new Question(10L, "scv1702", "title", "contents");
+        Question expected = new Question("scv1702", "title", "contents");
         questionDao.insert(expected);
 
-        Question actual = questionDao.findByQuestionId(10L);
+        Question actual = questionDao.findByQuestionId(expected.getQuestionId());
         Assert.assertEquals(expected, actual);
     }
 
     @Test
     public void update() {
-        Question expected = new Question(10L, "scv1702", "title", "contents");
-        questionDao.insert(expected);
+        Question question = new Question("scv1702", "title", "contents");
+        questionDao.insert(question);
 
-        questionDao.update(new Question(10L, "scv1702", "title2", "contents2"));
+        question.setTitle("title2");
+        question.setContents("contents2");
 
-        Question actual = questionDao.findByQuestionId(10L);
+        questionDao.update(question);
+
+        Question actual = questionDao.findByQuestionId(question.getQuestionId());
         Assert.assertEquals("title2", actual.getTitle());
         Assert.assertEquals("contents2", actual.getContents());
     }
@@ -50,10 +53,10 @@ public class QuestionDaoTest {
 
     @Test
     public void findByQuestionId() {
-        Question expected = new Question(10L, "scv1702", "title", "contents");
+        Question expected = new Question("scv1702", "title", "contents");
         questionDao.insert(expected);
 
-        Question actual = questionDao.findByQuestionId(10L);
+        Question actual = questionDao.findByQuestionId((expected.getQuestionId()));
 
         Assert.assertEquals(expected, actual);
     }

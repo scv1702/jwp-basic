@@ -10,6 +10,7 @@ public class UserDao {
 
     public void insert(User user) {
         jdbcTemplate.insert(
+            user,
         "INSERT INTO USERS VALUES (?, ?, ?, ?)",
             user.getUserId(),
             user.getPassword(),

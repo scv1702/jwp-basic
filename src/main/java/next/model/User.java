@@ -1,6 +1,12 @@
 package next.model;
 
+import core.jdbc.Id;
+
+import java.util.Objects;
+
 public class User {
+
+    @Id
     private String userId;
     private String password;
     private String name;
@@ -32,6 +38,18 @@ public class User {
         return email;
     }
 
+    public void setPassword(final String password) {
+        this.password = password;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public void setEmail(final String email) {
+        this.email = email;
+    }
+
     public boolean matchPassword(String password) {
         if (password == null) {
             return false;
@@ -56,29 +74,15 @@ public class User {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
+        if (obj == null) return false;
+        if (this == obj) return true;
+        if (!(obj instanceof User)) return false;
+
         User other = (User) obj;
-        if (email == null) {
-            if (other.email != null)
-                return false;
-        } else if (!email.equals(other.email))
-            return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        if (userId == null) {
-            if (other.userId != null)
-                return false;
-        } else if (!userId.equals(other.userId))
-            return false;
-        return true;
+
+        return Objects.equals(userId, other.userId) &&
+                Objects.equals(name, other.name) &&
+                Objects.equals(email, other.email);
     }
 
     @Override
