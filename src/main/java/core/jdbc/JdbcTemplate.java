@@ -8,26 +8,37 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class JdbcTemplate {
     private static final Logger log = LoggerFactory.getLogger(JdbcTemplate.class);
 
+    private static final Map<Class<?>, PropertyConverter> converters = new HashMap<>();
+
+    static {
+        converters.put(Integer.class, new IntegerConverter());
+        converters.put(Long.class, new LongConverter());
+        converters.put(LocalDateTime.class, new LocalDateTimeConverter());
+    }
+
     private PreparedStatement createPreparedStatement(
         Connection conn, 
         String sql, 
-        String... args
+        Object... args
     ) throws SQLException {
         PreparedStatement pstmt = conn.prepareStatement(sql);
         for (int i = 0; i < args.length; i++) {
-            pstmt.setString(i + 1, args[i]);
+            String value = args[i].toString();
+            if (converters.containsKey(args[i].getClass())) {
+                value = converters.get(args[i].getClass()).toString(args[i]);
+            }
+            pstmt.setString(i + 1, value);
         }
         return pstmt;
     }
 
-    public void insert(String sql, String... args) {
+    public void insert(String sql, Object... args) {
         try (Connection con = ConnectionManager.getConnection();
              PreparedStatement pstmt = createPreparedStatement(con, sql, args)) {
             pstmt.executeUpdate();
@@ -36,7 +47,7 @@ public class JdbcTemplate {
         }
     }
 
-    public void update(String sql, String... args) {
+    public void update(String sql, Object... args) {
         insert(sql, args);
     }
 
@@ -48,12 +59,17 @@ public class JdbcTemplate {
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
             field.setAccessible(true);
-            field.set(instance, rs.getString(field.getName()));
+            Object value = rs.getString(field.getName());
+            if (converters.containsKey(field.getType())) {
+                value = converters.get(field.getType())
+                    .fromString(rs.getString(field.getName()));
+            }
+            field.set(instance, value);
         }
         return instance;
     }
 
-    public <T> List<T> select(Class<T> clazz, String sql, String... args) {
+    public <T> List<T> select(Class<T> clazz, String sql, Object... args) {
         List<T> result = new ArrayList<>();
         try (Connection con = ConnectionManager.getConnection();
              PreparedStatement pstmt = createPreparedStatement(con, sql, args);
@@ -68,7 +84,7 @@ public class JdbcTemplate {
         return result;
     }
 
-    public <T> Optional<T> selectOne(Class<T> clazz, String sql, String... args) {
+    public <T> Optional<T> selectOne(Class<T> clazz, String sql, Object... args) {
         try (Connection con = ConnectionManager.getConnection();
              PreparedStatement pstmt = createPreparedStatement(con, sql, args);
              ResultSet rs = pstmt.executeQuery()) {
