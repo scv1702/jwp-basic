@@ -1,6 +1,6 @@
 package next.model;
 
-import core.jdbc.Id;
+import core.jdbc.annotations.Id;
 
 import java.util.Objects;
 
@@ -18,6 +18,12 @@ public class User {
     public User(String userId, String password, String name, String email) {
         this.userId = userId;
         this.password = password;
+        this.name = name;
+        this.email = email;
+    }
+
+    public User(String userId, String name, String email) {
+        this.userId = userId;
         this.name = name;
         this.email = email;
     }

@@ -1,4 +1,4 @@
-package core.jdbc;
+package core.jdbc.converter;
 
 public class LongConverter implements PropertyConverter<Long> {
 

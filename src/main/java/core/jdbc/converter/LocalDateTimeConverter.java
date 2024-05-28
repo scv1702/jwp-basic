@@ -1,4 +1,4 @@
-package core.jdbc;
+package core.jdbc.converter;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

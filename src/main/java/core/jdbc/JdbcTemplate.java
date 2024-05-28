@@ -1,5 +1,11 @@
 package core.jdbc;
 
+import core.jdbc.annotations.GeneratedValue;
+import core.jdbc.annotations.Id;
+import core.jdbc.converter.IntegerConverter;
+import core.jdbc.converter.LocalDateTimeConverter;
+import core.jdbc.converter.LongConverter;
+import core.jdbc.converter.PropertyConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,6 +116,23 @@ public class JdbcTemplate {
         return result;
     }
 
+    public <T> List<T> select(String sql, RowMapper<T> rowMapper, Object... args) {
+        List<T> result = new ArrayList<>();
+        try (Connection con = ConnectionManager.getConnection();
+             PreparedStatement pstmt = createPreparedStatement(con, sql, args);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                T r = rowMapper.map(rs);
+                setId(r, rs.getObject(1));
+                result.add(r);
+            }
+            log.info("result: {}", result);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return result;
+    }
+
     public <T> Optional<T> selectOne(Class<T> clazz, String sql, Object... args) {
         try (Connection con = ConnectionManager.getConnection();
              PreparedStatement pstmt = createPreparedStatement(con, sql, args);
@@ -118,6 +141,21 @@ public class JdbcTemplate {
                 return Optional.of(createResult(clazz, rs));
             }
         } catch (SQLException | InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        return Optional.empty();
+    }
+
+    public <T> Optional<T> selectOne(String sql, RowMapper<T> rowMapper, Object... args) {
+        try (Connection con = ConnectionManager.getConnection();
+             PreparedStatement pstmt = createPreparedStatement(con, sql, args);
+             ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                T r = rowMapper.map(rs);
+                setId(r, rs.getObject(1));
+                return Optional.of(r);
+            }
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return Optional.empty();

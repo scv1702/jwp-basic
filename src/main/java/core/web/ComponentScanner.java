@@ -1,5 +1,6 @@
 package core.web;
 
+import core.web.annotations.Component;
 import core.web.exception.ComponentScanException;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
