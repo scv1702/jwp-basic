@@ -160,4 +160,16 @@ public class JdbcTemplate {
         }
         return Optional.empty();
     }
+
+    public void delete(String sql, Object... args) {
+        try (Connection con = ConnectionManager.getConnection();
+             PreparedStatement pstmt = createPreparedStatement(con, sql, args)) {
+            int result = pstmt.executeUpdate();
+            if (result == 0) {
+                throw new IllegalArgumentException("No data to delete");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

@@ -8,6 +8,7 @@ import next.model.User;
 
 import java.sql.ResultSet;
 import java.util.List;
+import java.util.Optional;
 
 public class AnswerDao {
     JdbcTemplate jdbcTemplate = new JdbcTemplate();
@@ -54,7 +55,15 @@ public class AnswerDao {
         );
     }
 
+    public Optional<Answer> findByAnswerId(Long answerId) {
+        return jdbcTemplate.selectOne(SELECT + " WHERE A.answerId=?", mapper, answerId);
+    }
+
     public List<Answer> findByQuestionId(Long questionId) {
         return jdbcTemplate.select(SELECT + " WHERE Q.questionId=?", mapper, questionId);
+    }
+
+    public void delete(Long answerId) {
+        jdbcTemplate.delete("DELETE FROM ANSWERS WHERE answerId=?", answerId);
     }
 }
