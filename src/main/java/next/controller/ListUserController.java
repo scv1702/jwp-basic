@@ -1,7 +1,7 @@
 package next.controller;
 
-import core.web.Controller;
-import core.web.RequestMapping;
+import core.web.annotations.Controller;
+import core.web.annotations.RequestMapping;
 import next.dao.UserDao;
 
 import javax.servlet.http.HttpServletRequest;

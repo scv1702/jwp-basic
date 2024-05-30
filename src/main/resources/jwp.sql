@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS USERS;
 
 CREATE TABLE USERS (
-                       userId          varchar(12)		NOT NULL,
+                       userId          varchar(30)		NOT NULL,
                        password		varchar(12)		NOT NULL,
                        name			varchar(20)		NOT NULL,
                        email			varchar(50),
@@ -10,6 +10,15 @@ CREATE TABLE USERS (
 );
 
 INSERT INTO USERS VALUES('admin', 'password', '자바지기', 'admin@slipp.net');
+INSERT INTO USERS VALUES('자바지기', 'password', '자바지기', 'admin@slipp.net');
+INSERT INTO USERS VALUES('김문수', 'password', '김문수', 'admin@slipp.net');
+INSERT INTO USERS VALUES('johnburr', 'password', 'johnburr', 'admin@slipp.net');
+INSERT INTO USERS VALUES('javajigi', 'password', 'javajigi', 'admin@slipp.net');
+INSERT INTO USERS VALUES('eungju', 'password', 'eungju', 'admin@slipp.net');
+INSERT INTO USERS VALUES('강우', 'password', '강우', 'admin@slipp.net');
+INSERT INTO USERS VALUES('Toby Lee', 'password', 'Toby Lee', 'admin@slipp.net');
+INSERT INTO USERS VALUES('jhindhal.jhang', 'password', 'jhindhal.jhang', 'admin@slipp.net');
+INSERT INTO USERS VALUES('Hanghee Yi', 'password', 'Hanghee Yi', 'admin@slipp.net');
 
 DROP TABLE IF EXISTS QUESTIONS;
 

@@ -2,8 +2,8 @@ package next.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import core.web.Controller;
-import core.web.RequestMapping;
+import core.web.annotations.Controller;
+import core.web.annotations.RequestMapping;
 import core.web.RequestMethod;
 import next.dao.QuestionDao;
 import next.model.Question;
@@ -29,7 +29,7 @@ public class CreateQuestionController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String createQuestion(HttpServletRequest req, HttpServletResponse res) throws JsonProcessingException {
         Question question = new Question(
-            req.getParameter("writer"),
+            UserSessionUtils.getUserFromSession(req.getSession()),
             req.getParameter("title"),
             req.getParameter("contents")
         );

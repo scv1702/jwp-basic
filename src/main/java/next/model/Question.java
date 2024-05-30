@@ -1,7 +1,7 @@
 package next.model;
 
-import core.jdbc.GeneratedValue;
-import core.jdbc.Id;
+import core.jdbc.annotations.GeneratedValue;
+import core.jdbc.annotations.Id;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -10,7 +10,7 @@ public class Question {
 
     @Id @GeneratedValue
     private Long questionId;
-    private String writer;
+    private User writer;
     private String title;
     private String contents;
     private LocalDateTime createdDate;
@@ -19,7 +19,16 @@ public class Question {
     public Question() {
     }
 
-    public Question(String writer, String title, String contents) {
+    public Question(Long questionId, User writer, String title, String contents, LocalDateTime createdDate, Integer countOfAnswer) {
+        this.questionId = questionId;
+        this.writer = writer;
+        this.title = title;
+        this.contents = contents;
+        this.createdDate = createdDate;
+        this.countOfAnswer = countOfAnswer;
+    }
+
+    public Question(User writer, String title, String contents) {
         this.writer = writer;
         this.title = title;
         this.contents = contents;
@@ -56,7 +65,7 @@ public class Question {
         return contents;
     }
 
-    public String getWriter() {
+    public User getWriter() {
         return writer;
     }
 
@@ -70,10 +79,6 @@ public class Question {
 
     public Integer getCountOfAnswer() {
         return countOfAnswer;
-    }
-
-    public void setWriter(final String writer) {
-        this.writer = writer;
     }
 
     public void setTitle(final String title) {

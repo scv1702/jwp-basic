@@ -2,6 +2,7 @@ package next.dao;
 
 import core.jdbc.ConnectionManager;
 import next.model.Question;
+import next.model.User;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,17 +14,21 @@ import java.util.List;
 
 public class QuestionDaoTest {
     QuestionDao questionDao = new QuestionDao();
+    UserDao userDao = new UserDao();
+    User writer = new User("scv1702", "password", "name", "email");
 
     @Before
     public void setup() {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScript(new ClassPathResource("jwp.sql"));
         DatabasePopulatorUtils.execute(populator, ConnectionManager.getDataSource());
+
+        userDao.insert(writer);
     }
 
     @Test
     public void create() {
-        Question expected = new Question("scv1702", "title", "contents");
+        Question expected = new Question(writer, "title", "contents");
         questionDao.insert(expected);
 
         Question actual = questionDao.findByQuestionId(expected.getQuestionId());
@@ -32,7 +37,7 @@ public class QuestionDaoTest {
 
     @Test
     public void update() {
-        Question question = new Question("scv1702", "title", "contents");
+        Question question = new Question(writer, "title", "contents");
         questionDao.insert(question);
 
         question.setTitle("title2");
@@ -53,7 +58,7 @@ public class QuestionDaoTest {
 
     @Test
     public void findByQuestionId() {
-        Question expected = new Question("scv1702", "title", "contents");
+        Question expected = new Question(writer, "title", "contents");
         questionDao.insert(expected);
 
         Question actual = questionDao.findByQuestionId((expected.getQuestionId()));
