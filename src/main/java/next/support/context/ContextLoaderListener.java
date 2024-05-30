@@ -1,7 +1,7 @@
 package next.support.context;
 
 import core.jdbc.ConnectionManager;
-import core.web.ComponentScanner;
+import core.context.ComponentScanner;
 import core.web.RequestMappingHandlerMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

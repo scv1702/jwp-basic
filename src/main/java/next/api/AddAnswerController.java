@@ -1,11 +1,10 @@
 package next.api;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import core.util.json.JsonConverter;
-import core.web.RequestMethod;
-import core.web.ResponseEntity;
-import core.web.annotations.Controller;
+import core.context.annotations.Controller;
+import core.http.HttpMethod;
+import core.http.ResponseEntity;
 import core.web.annotations.RequestMapping;
+import core.web.annotations.RequestParam;
 import core.web.annotations.ResponseBody;
 import next.controller.UserSessionUtils;
 import next.dao.AnswerDao;
@@ -15,30 +14,32 @@ import next.util.ApiResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 @Controller
+@ResponseBody
 @RequestMapping("/api/qna")
 public class AddAnswerController {
 
     private static final Logger log = LoggerFactory.getLogger(AddAnswerController.class);
     private QuestionDao questionDao = new QuestionDao();
     private AnswerDao answerDao = new AnswerDao();
-    private JsonConverter jsonConverter = new JsonConverter();
 
-    @RequestMapping(value = "/addAnswer", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<?> addAnswer(HttpServletRequest req, HttpServletResponse res) throws JsonProcessingException {
-        if (!UserSessionUtils.isLogined(req.getSession())) {
+    @RequestMapping(value = "/addAnswer", method = HttpMethod.POST)
+    public ResponseEntity<?> addAnswer(
+        @RequestParam("contents") String contents,
+        @RequestParam("questionId") Long questionId,
+        HttpSession session
+    ) {
+        if (!UserSessionUtils.isLogined(session)) {
             return ResponseEntity.unauthorized().body(ApiResult.error("로그인 후 이용해주세요."));
         }
         Answer answer = new Answer(
-            UserSessionUtils.getUserFromSession(req.getSession()),
-            questionDao.findByQuestionId(Long.valueOf(req.getParameter("questionId"))),
-            req.getParameter("contents")
+            UserSessionUtils.getUserFromSession(session),
+            questionDao.findByQuestionId(questionId),
+            contents
         );
         answerDao.insert(answer);
-        return ResponseEntity.created().body(ApiResult.success("답변이 등록되었습니다.", answer));
+        return ResponseEntity.ok().body(ApiResult.success("답변이 등록되었습니다.", answer));
     }
 }

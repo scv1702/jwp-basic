@@ -1,6 +1,8 @@
 package core.web;
 
-import core.util.json.JsonConverter;
+import core.http.HttpMethod;
+import core.web.method.HandlerArgumentResolver;
+import core.web.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +19,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private RequestMappingHandlerMapping handlerMapping;
-    private JsonConverter jsonConverter = new JsonConverter();
+    private final HandlerArgumentResolver handlerArgumentResolver = new HandlerArgumentResolver();
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -29,33 +31,17 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void service(HttpServletRequest req, HttpServletResponse res) throws RuntimeException {
         try {
-            RequestMethod requestMethod = RequestMethod.valueOf(req.getMethod());
+            HttpMethod httpMethod = HttpMethod.valueOf(req.getMethod());
             String requestURI = req.getRequestURI();
             String contextPath = req.getContextPath();
             String mappingURI = requestURI.substring(contextPath.length());
 
-            RequestMappingHandler handler = handlerMapping.getHandler(mappingURI, requestMethod);
+            RequestMappingHandler handler = handlerMapping.getHandler(mappingURI, httpMethod);
+            Model model = new Model();
+            Object[] args = handlerArgumentResolver.resolveArguments(handler, model, req, res);
 
-            Object result = handler.handle(req, res);
-
-            if (result instanceof ResponseEntity) {
-                ResponseEntity responseEntity = (ResponseEntity) result;
-                int status = responseEntity.getStatus();
-                Object body = responseEntity.getBody();
-                res.setStatus(status);
-                res.addHeader("Content-Type", "application/json");
-                res.getWriter().write(jsonConverter.convertToJson(body));
-            } else if (handler.hasResponseBody()) {
-                res.addHeader("Content-Type", "application/json");
-                res.getWriter().write(jsonConverter.convertToJson(result));
-            } else if (result instanceof String) {
-                String viewName = (String) result;
-                if (viewName.startsWith("redirect:")) {
-                    res.sendRedirect(viewName.substring("redirect:".length()));
-                } else {
-                    req.getRequestDispatcher(viewName + ".jsp").forward(req, res);
-                }
-            }
+            View view = handler.handle(args, model, req, res);
+            view.render();
         } catch (Exception e) {
             logger.error("Failed to service", e);
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

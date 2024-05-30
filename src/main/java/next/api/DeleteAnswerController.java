@@ -1,8 +1,8 @@
 package next.api;
 
-import core.web.RequestMethod;
-import core.web.ResponseEntity;
-import core.web.annotations.Controller;
+import core.http.HttpMethod;
+import core.http.ResponseEntity;
+import core.context.annotations.Controller;
 import core.web.annotations.RequestMapping;
 import core.web.annotations.ResponseBody;
 import next.controller.UserSessionUtils;
@@ -17,14 +17,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 @Controller
+@ResponseBody
 @RequestMapping("/api/qna")
 public class DeleteAnswerController {
 
     private static final Logger log = LoggerFactory.getLogger(DeleteAnswerController.class);
     private AnswerDao answerDao = new AnswerDao();
 
-    @RequestMapping(value = "/deleteAnswer", method = RequestMethod.POST)
-    @ResponseBody
+    @RequestMapping(value = "/deleteAnswer", method = HttpMethod.POST)
     public ResponseEntity<?> deleteAnswer(HttpServletRequest req, HttpServletResponse res) {
         if (!UserSessionUtils.isLogined(req.getSession())) {
             return ResponseEntity.unauthorized().body(ApiResult.error("로그인 후 이용해주세요."));

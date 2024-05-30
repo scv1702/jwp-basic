@@ -1,80 +1,15 @@
 package core.web;
 
-import core.web.annotations.Controller;
+import core.http.HttpMethod;
+import core.context.annotations.Controller;
 import core.web.annotations.RequestMapping;
-import core.web.annotations.ResponseBody;
 import core.web.exception.NoRequestMappingHandlerException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-class RequestMappingKey {
-
-    private final String uri;
-    private final RequestMethod method;
-
-    public RequestMappingKey(String uri, RequestMethod method) {
-        this.uri = uri;
-        this.method = method;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof RequestMappingKey) {
-            RequestMappingKey other = (RequestMappingKey) obj;
-            return uri.equals(other.uri) && method.equals(other.method);
-        }
-
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(uri, method);
-    }
-}
-
-class RequestMappingHandler {
-
-    private final Object controller;
-    private final Method method;
-
-    public RequestMappingHandler(Object controller, Method method) {
-        this.controller = controller;
-        this.method = method;
-    }
-
-    public Object handle(HttpServletRequest req, HttpServletResponse res)
-        throws InvocationTargetException, IllegalAccessException {
-        return method.invoke(controller, req, res);
-    }
-
-    public boolean hasResponseBody() {
-        return method.isAnnotationPresent(ResponseBody.class);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof RequestMappingHandler) {
-            RequestMappingHandler other = (RequestMappingHandler) obj;
-            return controller.equals(other.controller) && method.equals(other.method);
-        }
-
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(controller, method);
-    }
-}
 
 public class RequestMappingHandlerMapping {
 
@@ -100,11 +35,11 @@ public class RequestMappingHandlerMapping {
         }
     }
 
-    public RequestMappingHandler getHandler(String mappingURI, RequestMethod requestMethod) {
+    public RequestMappingHandler getHandler(String mappingURI, HttpMethod httpMethod) {
         RequestMappingHandler handler =
-            requestMappingHandlers.get(new RequestMappingKey(mappingURI, requestMethod));
+            requestMappingHandlers.get(new RequestMappingKey(mappingURI, httpMethod));
         if (handler == null) {
-            throw new NoRequestMappingHandlerException(mappingURI, requestMethod);
+            throw new NoRequestMappingHandlerException(mappingURI, httpMethod);
         }
         return handler;
     }

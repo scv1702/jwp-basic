@@ -1,11 +1,11 @@
 package next.controller;
 
-import core.web.annotations.Controller;
+import core.web.Model;
+import core.context.annotations.Controller;
 import core.web.annotations.RequestMapping;
 import next.dao.UserDao;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
 
 @Controller
@@ -14,11 +14,11 @@ public class ListUserController {
     private UserDao userDao = new UserDao();
 
     @RequestMapping("/list")
-    public String list(HttpServletRequest req, HttpServletResponse res) throws SQLException {
-        if (!UserSessionUtils.isLogined(req.getSession())) {
+    public String list(HttpSession session, Model model) throws SQLException {
+        if (!UserSessionUtils.isLogined(session)) {
             return "redirect:/users/loginForm";
         }
-        req.setAttribute("users", userDao.findAll());
+        model.addAttribute("users", userDao.findAll());
         return "/user/list";
     }
 }

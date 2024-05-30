@@ -1,10 +1,10 @@
 package core.web.exception;
 
-import core.web.RequestMethod;
+import core.http.HttpMethod;
 
 public class NoRequestMappingHandlerException extends RuntimeException {
 
-    public NoRequestMappingHandlerException(String mappingUri, RequestMethod requestMethod) {
-        super("No handler found for " + requestMethod + " " + mappingUri);
+    public NoRequestMappingHandlerException(String mappingUri, HttpMethod httpMethod) {
+        super("No handler found for " + httpMethod + " " + mappingUri);
     }
 }

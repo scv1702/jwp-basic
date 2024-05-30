@@ -9,7 +9,7 @@ $(".answerWrite input[type=submit]").click(function (e){
     url: '/api/qna/addAnswer',
     data: queryString,
     dataType: 'json',
-    success: function onSuccess(json, status) {
+    success: (json, status) => {
       var answer = json.data;
       alert(json.message);
       var answerTemplate = $("#answerTemplate").html();
@@ -28,7 +28,6 @@ $(".qna-comment").on("click", ".form-delete", function (e) {
 
   var deleteBtn = $(this);
   var queryString = deleteBtn.closest("form").serialize();
-  console.log("qs : " + queryString);
 
   $.ajax({
     type: 'post',
@@ -39,8 +38,7 @@ $(".qna-comment").on("click", ".form-delete", function (e) {
       var json = xhr.responseJSON;
       alert(json.message);
     },
-    success: function onSuccess(json, status) {
-      console.log(json);
+    success: (json, status) => {
       alert(json.message);
       deleteBtn.closest('article').remove();
     }
@@ -49,7 +47,7 @@ $(".qna-comment").on("click", ".form-delete", function (e) {
 
 String.prototype.format = function() {
   var args = arguments;
-  return this.replace(/{(\d+)}/g, function(match, number) {
+  return this.replace(/{(\d+)}/g, (match, number) => {
     return typeof args[number] != 'undefined'
         ? args[number]
         : match

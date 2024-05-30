@@ -1,6 +1,6 @@
-package core.web;
+package core.context;
 
-import core.web.annotations.Component;
+import core.context.annotations.Component;
 import core.web.exception.ComponentScanException;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
