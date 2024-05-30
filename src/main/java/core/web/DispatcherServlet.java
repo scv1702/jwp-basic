@@ -1,5 +1,6 @@
 package core.web;
 
+import core.util.json.JsonConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +17,7 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private RequestMappingHandlerMapping handlerMapping;
+    private JsonConverter jsonConverter = new JsonConverter();
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -25,7 +27,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    public void service(HttpServletRequest req, HttpServletResponse res) {
+    public void service(HttpServletRequest req, HttpServletResponse res) throws RuntimeException {
         try {
             RequestMethod requestMethod = RequestMethod.valueOf(req.getMethod());
             String requestURI = req.getRequestURI();
@@ -34,19 +36,29 @@ public class DispatcherServlet extends HttpServlet {
 
             RequestMappingHandler handler = handlerMapping.getHandler(mappingURI, requestMethod);
 
-            String result = handler.handle(req, res);
+            Object result = handler.handle(req, res);
 
-            if (handler.hasResponseBody()) {
+            if (result instanceof ResponseEntity) {
+                ResponseEntity responseEntity = (ResponseEntity) result;
+                int status = responseEntity.getStatus();
+                Object body = responseEntity.getBody();
+                res.setStatus(status);
                 res.addHeader("Content-Type", "application/json");
-                res.getWriter().write(result);
-            } else if (result.startsWith("redirect:")) {
-                res.sendRedirect(result.substring("redirect:".length()));
-            } else {
-                req.getRequestDispatcher(result + ".jsp").forward(req, res);
+                res.getWriter().write(jsonConverter.convertToJson(body));
+            } else if (handler.hasResponseBody()) {
+                res.addHeader("Content-Type", "application/json");
+                res.getWriter().write(jsonConverter.convertToJson(result));
+            } else if (result instanceof String) {
+                String viewName = (String) result;
+                if (viewName.startsWith("redirect:")) {
+                    res.sendRedirect(viewName.substring("redirect:".length()));
+                } else {
+                    req.getRequestDispatcher(viewName + ".jsp").forward(req, res);
+                }
             }
         } catch (Exception e) {
             logger.error("Failed to service", e);
-            res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 }

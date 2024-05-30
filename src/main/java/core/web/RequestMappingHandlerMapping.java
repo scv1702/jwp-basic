@@ -51,9 +51,9 @@ class RequestMappingHandler {
         this.method = method;
     }
 
-    public String handle(HttpServletRequest req, HttpServletResponse res)
+    public Object handle(HttpServletRequest req, HttpServletResponse res)
         throws InvocationTargetException, IllegalAccessException {
-        return (String) method.invoke(controller, req, res);
+        return method.invoke(controller, req, res);
     }
 
     public boolean hasResponseBody() {

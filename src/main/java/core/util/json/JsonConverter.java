@@ -2,6 +2,7 @@ package core.util.json;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import core.util.json.serializer.LocalDateTimeSerializer;
 
@@ -14,6 +15,7 @@ public class JsonConverter {
     {
         module.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer());
         objectMapper.registerModule(module);
+        objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
     }
 
     public String convertToJson(Object object) throws JsonProcessingException {
