@@ -1,7 +1,7 @@
 package core.web.method;
 
+import core.web.handler.Handler;
 import core.web.Model;
-import core.web.RequestMappingHandler;
 import core.web.annotations.RequestHeader;
 import core.web.annotations.RequestParam;
 
@@ -24,7 +24,7 @@ public class HandlerArgumentResolver {
     }
 
     public Object[] resolveArguments(
-        RequestMappingHandler handler,
+        Handler handler,
         Model model,
         HttpServletRequest req,
         HttpServletResponse res

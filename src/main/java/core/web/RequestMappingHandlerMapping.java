@@ -4,14 +4,17 @@ import core.http.HttpMethod;
 import core.context.annotations.Controller;
 import core.web.annotations.RequestMapping;
 import core.web.exception.NoRequestMappingHandlerException;
+import core.web.handler.Handler;
+import core.web.handler.RequestMappingHandler;
 
+import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class RequestMappingHandlerMapping {
+public class RequestMappingHandlerMapping implements HandlerMapping {
 
     private final Map<RequestMappingKey, RequestMappingHandler> requestMappingHandlers = new HashMap<>();
 
@@ -35,11 +38,18 @@ public class RequestMappingHandlerMapping {
         }
     }
 
-    public RequestMappingHandler getHandler(String mappingURI, HttpMethod httpMethod) {
-        RequestMappingHandler handler =
-            requestMappingHandlers.get(new RequestMappingKey(mappingURI, httpMethod));
+    public static String getMappingURI(HttpServletRequest req) {
+        String requestURI = req.getRequestURI();
+        String contextPath = req.getContextPath();
+        return requestURI.substring(contextPath.length());
+    }
+
+    public Handler getHandler(HttpServletRequest req) {
+        HttpMethod method = HttpMethod.valueOf(req.getMethod());
+        String mappingURI = getMappingURI(req);
+        Handler handler = requestMappingHandlers.get(new RequestMappingKey(mappingURI, method));
         if (handler == null) {
-            throw new NoRequestMappingHandlerException(mappingURI, httpMethod);
+            throw new NoRequestMappingHandlerException(mappingURI, method);
         }
         return handler;
     }

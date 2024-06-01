@@ -1,6 +1,8 @@
 package core.web;
 
-import core.http.HttpMethod;
+import core.http.ResponseEntity;
+import core.util.json.JsonConverter;
+import core.web.handler.Handler;
 import core.web.method.HandlerArgumentResolver;
 import core.web.view.View;
 import org.slf4j.Logger;
@@ -18,25 +20,21 @@ import javax.servlet.http.HttpServletResponse;
 public class DispatcherServlet extends HttpServlet {
 
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
-    private RequestMappingHandlerMapping handlerMapping;
+    private HandlerMapping handlerMapping;
     private final HandlerArgumentResolver handlerArgumentResolver = new HandlerArgumentResolver();
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         ServletContext servletContext = config.getServletContext();
-        handlerMapping = (RequestMappingHandlerMapping) servletContext.getAttribute("handlerMapping");
+        handlerMapping = (HandlerMapping) servletContext.getAttribute("handlerMapping");
     }
 
     @Override
     public void service(HttpServletRequest req, HttpServletResponse res) throws RuntimeException {
         try {
-            HttpMethod httpMethod = HttpMethod.valueOf(req.getMethod());
-            String requestURI = req.getRequestURI();
-            String contextPath = req.getContextPath();
-            String mappingURI = requestURI.substring(contextPath.length());
+            Handler handler = handlerMapping.getHandler(req);
 
-            RequestMappingHandler handler = handlerMapping.getHandler(mappingURI, httpMethod);
             Model model = new Model();
             Object[] args = handlerArgumentResolver.resolveArguments(handler, model, req, res);
 
