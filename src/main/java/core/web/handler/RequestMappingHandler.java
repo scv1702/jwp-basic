@@ -1,6 +1,5 @@
 package core.web.handler;
 
-import core.web.Model;
 import core.web.annotations.ResponseBody;
 
 import java.lang.reflect.Method;
@@ -16,14 +15,17 @@ public class RequestMappingHandler implements Handler {
         this.method = method;
     }
 
-    public Object handle(Object[] args, Model model) throws Exception {
+    @Override
+    public Object handle(Object[] args) throws Exception {
         return method.invoke(controller, args);
     }
 
+    @Override
     public Method getMethod() {
         return method;
     }
 
+    @Override
     public boolean hasResponseBody() {
         return controller.getClass().isAnnotationPresent(ResponseBody.class) ||
             method.isAnnotationPresent(ResponseBody.class);

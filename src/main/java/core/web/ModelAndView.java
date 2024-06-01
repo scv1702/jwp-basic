@@ -1,26 +1,56 @@
 package core.web;
 
-import core.web.view.JspView;
 import core.web.view.View;
 
 public class ModelAndView {
-    private final View viewName;
-    private final Model model = new Model();
+    private Object view;
+    private Model model = new Model();
+
+    public ModelAndView() {
+    }
 
     public ModelAndView(final String viewName) {
-        this.viewName = new JspView(viewName);
+        this.view = viewName;
+    }
+
+    public ModelAndView(final View view, final Model model) {
+        this.view = view;
+        this.model = model;
+    }
+
+    public ModelAndView(final String viewName, final Model model) {
+        this.view = viewName;
+        this.model = model;
+    }
+
+    public String getViewName() {
+        if (view instanceof String) {
+            return (String) view;
+        }
+        return null;
     }
 
     public View getView() {
-        return viewName;
+        if (view instanceof View) {
+            return (View) view;
+        }
+        return null;
+    }
+
+    public void setViewName(final String viewName) {
+        this.view = viewName;
+    }
+
+    public void setView(final View view) {
+        this.view = view;
     }
 
     public Model getModel() {
         return model;
     }
 
-    public ModelAndView addObject(final String attributeName, final Object attributeValue) {
-        model.addAttribute(attributeName, attributeValue);
-        return this;
+
+    public void setModel(final Model model) {
+        this.model = model;
     }
 }

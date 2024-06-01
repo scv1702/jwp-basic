@@ -1,14 +1,26 @@
 package core.web.method;
 
+import core.web.Model;
 import core.web.annotations.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Parameter;
 import java.util.Map;
 
-public class RequestParamArgumentResolver implements ArgumentResolver {
+public class RequestParamMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
-    public Object resolve(Parameter parameter, HttpServletRequest req) {
+    @Override
+    public boolean supports(Parameter parameter) {
+        return parameter.isAnnotationPresent(RequestParam.class);
+    }
+
+    @Override
+    public Object resolve(Parameter parameter, Model model, HttpServletRequest req, HttpServletResponse res) {
+        if (!supports(parameter)) {
+            throw new IllegalArgumentException("Unsupported parameter type");
+        }
+
         RequestParam requestParam = parameter.getAnnotation(RequestParam.class);
 
         String value = req.getParameter(requestParam.value());

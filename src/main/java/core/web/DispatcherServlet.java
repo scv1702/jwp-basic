@@ -1,9 +1,6 @@
 package core.web;
 
-import core.http.ResponseEntity;
-import core.util.json.JsonConverter;
 import core.web.handler.Handler;
-import core.web.method.HandlerArgumentResolver;
 import core.web.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +18,8 @@ public class DispatcherServlet extends HttpServlet {
 
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private HandlerMapping handlerMapping;
-    private final HandlerArgumentResolver handlerArgumentResolver = new HandlerArgumentResolver();
-    private final ViewResolver viewResolver = new ViewResolver();
-    private final JsonConverter jsonConverter = new JsonConverter();
+    private final HandlerAdaptor handlerAdaptor = new RequestMappingHandlerAdaptor();
+    private final ViewResolver viewResolver = new DefaultViewResolver();
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -36,30 +32,31 @@ public class DispatcherServlet extends HttpServlet {
     public void service(HttpServletRequest req, HttpServletResponse res) throws RuntimeException {
         try {
             Handler handler = handlerMapping.getHandler(req);
-
-            Model model = new Model();
-            Object[] args = handlerArgumentResolver.resolveArguments(handler, model, req, res);
-
-            Object result = handler.handle(args, model);
-
-            if (handler.hasResponseBody()) {
-                res.setContentType("application/json");
-                res.setCharacterEncoding("UTF-8");
-                Object body = result;
-                if (result instanceof ResponseEntity) {
-                    ResponseEntity<?> responseEntity = (ResponseEntity<?>) result;
-                    res.setStatus(responseEntity.getStatus());
-                    body = jsonConverter.convertToJson(responseEntity.getBody());
-                }
-                res.getWriter().print(body);
-                return ;
-            }
-
-            View view = viewResolver.resolveView(handler, result);
-            view.render(model, req, res);
+            ModelAndView modelAndView = handlerAdaptor.handle(req, res, handler);
+            render(modelAndView, req, res);
         } catch (Exception e) {
             logger.error("Failed to service", e);
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public void render(ModelAndView modelAndView, HttpServletRequest req, HttpServletResponse res) throws Exception {
+        if (modelAndView == null) {
+            return ;
+        }
+
+        View view = modelAndView.getView();
+        if (view == null) {
+            String viewName = modelAndView.getViewName();
+            if (viewName != null) {
+                view = viewResolver.resolveViewName(modelAndView.getViewName());
+            }
+        }
+
+        if (view == null) {
+            return ;
+        }
+
+        view.render(modelAndView.getModel(), req, res);
     }
 }

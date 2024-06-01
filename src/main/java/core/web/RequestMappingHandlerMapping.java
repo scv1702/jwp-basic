@@ -38,7 +38,7 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
         }
     }
 
-    public static String getMappingURI(HttpServletRequest req) {
+    private static String getMappingURI(HttpServletRequest req) {
         String requestURI = req.getRequestURI();
         String contextPath = req.getContextPath();
         return requestURI.substring(contextPath.length());
