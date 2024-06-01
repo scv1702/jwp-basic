@@ -10,24 +10,13 @@ import java.io.IOException;
 public class JspView implements View {
 
     private final String viewName;
-    private final Model model;
-    private final HttpServletRequest req;
-    private final HttpServletResponse res;
 
-    public JspView(
-        final String viewName,
-        final Model model,
-        final HttpServletRequest req,
-        final HttpServletResponse res
-    ) {
+    public JspView(final String viewName) {
         this.viewName = viewName;
-        this.model = model;
-        this.req = req;
-        this.res = res;
     }
 
     @Override
-    public void render() throws IOException, ServletException {
+    public void render(final Model model, final HttpServletRequest req, final HttpServletResponse res) throws IOException, ServletException {
         model.getAttributes().forEach(req::setAttribute);
         if (viewName.startsWith("redirect:")) {
             res.sendRedirect(viewName.substring("redirect:".length()));

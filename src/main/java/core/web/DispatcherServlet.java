@@ -22,6 +22,8 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private HandlerMapping handlerMapping;
     private final HandlerArgumentResolver handlerArgumentResolver = new HandlerArgumentResolver();
+    private final ViewResolver viewResolver = new ViewResolver();
+    private final JsonConverter jsonConverter = new JsonConverter();
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -38,8 +40,23 @@ public class DispatcherServlet extends HttpServlet {
             Model model = new Model();
             Object[] args = handlerArgumentResolver.resolveArguments(handler, model, req, res);
 
-            View view = handler.handle(args, model, req, res);
-            view.render();
+            Object result = handler.handle(args, model);
+
+            if (handler.hasResponseBody()) {
+                res.setContentType("application/json");
+                res.setCharacterEncoding("UTF-8");
+                Object body = result;
+                if (result instanceof ResponseEntity) {
+                    ResponseEntity<?> responseEntity = (ResponseEntity<?>) result;
+                    res.setStatus(responseEntity.getStatus());
+                    body = jsonConverter.convertToJson(responseEntity.getBody());
+                }
+                res.getWriter().print(body);
+                return ;
+            }
+
+            View view = viewResolver.resolveView(handler, result);
+            view.render(model, req, res);
         } catch (Exception e) {
             logger.error("Failed to service", e);
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
