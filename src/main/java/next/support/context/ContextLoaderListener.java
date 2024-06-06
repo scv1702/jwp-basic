@@ -1,8 +1,7 @@
 package next.support.context;
 
-import core.jdbc.ConnectionManager;
 import core.context.ComponentScanner;
-import core.web.RequestMappingHandlerMapping;
+import core.jdbc.ConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
@@ -28,7 +27,6 @@ public class ContextLoaderListener implements ServletContextListener {
         ServletContext servletContext = sce.getServletContext();
         Map<String, Object> components = ComponentScanner.scan();
         servletContext.setAttribute("components", components);
-        servletContext.setAttribute("handlerMapping", new RequestMappingHandlerMapping(components));
 
         logger.info("Completed Load ServletContext!");
     }

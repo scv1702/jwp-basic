@@ -12,6 +12,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
@@ -25,7 +26,8 @@ public class DispatcherServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         ServletContext servletContext = config.getServletContext();
-        handlerMapping = (HandlerMapping) servletContext.getAttribute("handlerMapping");
+        Map<String, Object> components = (Map<String, Object>) servletContext.getAttribute("components");
+        handlerMapping = new RequestMappingHandlerMapping(components);
     }
 
     @Override
