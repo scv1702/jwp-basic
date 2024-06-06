@@ -26,6 +26,10 @@ public class ApiResult {
         return new ApiSuccessResult<>(message, null);
     }
 
+    public static <T> ApiSuccessResult<T> success(T data) {
+        return new ApiSuccessResult<>(null, data);
+    }
+
     public static <T> ApiSuccessResult<T> success(String message, T data) {
         return new ApiSuccessResult<>(message, data);
     }
