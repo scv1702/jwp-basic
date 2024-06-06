@@ -4,16 +4,16 @@ import core.jdbc.JdbcTemplate;
 import core.jdbc.RowMapper;
 import core.jdbc.converter.LocalDateTimeConverter;
 import next.model.Question;
-import next.model.User;
 
 import java.sql.ResultSet;
 import java.util.List;
 
 public class QuestionDao {
-    JdbcTemplate jdbcTemplate = new JdbcTemplate();
+    private final JdbcTemplate jdbcTemplate = new JdbcTemplate();
+    private final UserDao userDao = new UserDao();
 
     private static final String SELECT = "SELECT Q.questionId, Q.title, Q.contents, Q.createdDate, Q.countOfAnswer, " +
-        "U.userId, U.name, U.email " +
+        "U.userId " +
         "FROM QUESTIONS Q "+
         "LEFT JOIN USERS U ON Q.writer=U.userId";
 
@@ -21,11 +21,7 @@ public class QuestionDao {
 
     private final RowMapper<Question> mapper = (ResultSet rs) -> new Question(
         rs.getLong("questionId"),
-        new User(
-            rs.getString("userId"),
-            rs.getString("name"),
-            rs.getString("email")
-        ),
+        userDao.findByUserId(rs.getString("userId")),
         rs.getString("title"),
         rs.getString("contents"),
         localDateTimeConverter.fromString(rs.getString("createdDate")),

@@ -4,20 +4,21 @@ import core.jdbc.JdbcTemplate;
 import core.jdbc.RowMapper;
 import core.jdbc.converter.LocalDateTimeConverter;
 import next.model.Answer;
-import next.model.User;
 
 import java.sql.ResultSet;
 import java.util.List;
 import java.util.Optional;
 
 public class AnswerDao {
-    JdbcTemplate jdbcTemplate = new JdbcTemplate();
+    private final JdbcTemplate jdbcTemplate = new JdbcTemplate();
+    private final QuestionDao questionDao = new QuestionDao();
+    private final UserDao userDao = new UserDao();
 
     private final LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
 
     private static final String SELECT =
-        "SELECT A.answerId, A.contents ansContents, A.createdDate ansCreatedDate," +
-        "U2.userId qaUserId, U2.name qaName, U2.email qaEmail " +
+        "SELECT A.answerId, A.contents ansContents, A.createdDate ansCreatedDate, A.questionId, " +
+        "U2.userId qaUserId " +
         "FROM QUESTIONS Q "+
         "LEFT JOIN USERS U ON Q.writer=U.userId " +
         "JOIN ANSWERS A ON Q.questionId=A.questionId " +
@@ -25,12 +26,10 @@ public class AnswerDao {
 
     private final RowMapper<Answer> mapper = (ResultSet rs) -> new Answer(
         rs.getLong("answerId"),
-        new User(
-            rs.getString("qaUserId"),
-            rs.getString("qaName"),
-            rs.getString("qaEmail")
+        userDao.findByUserId(rs.getString("qaUserId")),
+        questionDao.findByQuestionId(
+            rs.getLong("questionId")
         ),
-        null,
         rs.getString("ansContents"),
         localDateTimeConverter.fromString(rs.getString("ansCreatedDate"))
     );
@@ -42,6 +41,10 @@ public class AnswerDao {
             answer.getWriter().getUserId(),
             answer.getContents(),
             answer.getCreatedDate(),
+            answer.getQuestion().getQuestionId()
+        );
+        jdbcTemplate.update(
+            "UPDATE QUESTIONS SET countOfAnswer = countOfAnswer + 1 WHERE questionId=?",
             answer.getQuestion().getQuestionId()
         );
     }
@@ -64,6 +67,11 @@ public class AnswerDao {
     }
 
     public void delete(Long answerId) {
+        jdbcTemplate.update(
+            "UPDATE QUESTIONS SET countOfAnswer = countOfAnswer - 1 " +
+                "WHERE questionId = (SELECT questionId FROM ANSWERS WHERE answerId = ? LIMIT 1)",
+            answerId
+        );
         jdbcTemplate.delete("DELETE FROM ANSWERS WHERE answerId=?", answerId);
     }
 }

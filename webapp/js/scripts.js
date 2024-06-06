@@ -15,6 +15,7 @@ $(".answerWrite input[type=submit]").click(function (e){
       var answerTemplate = $("#answerTemplate").html();
       var template = answerTemplate.format(answer.writer.name, answer.createdDate, answer.contents, answer.answerId, answer.answerId);
       $(".qna-comment-slipp-articles").prepend(template);
+      $(".qna-comment-count strong").text(answer.question.countOfAnswer);
     },
     error : (xhr, status) => {
       var json = xhr.responseJSON;
@@ -41,6 +42,9 @@ $(".qna-comment").on("click", ".form-delete", function (e) {
     success: (json, status) => {
       alert(json.message);
       deleteBtn.closest('article').remove();
+      //TODO: 동시에 여러명이 삭제하면 유효하지 않음
+      var countOfAnswer = parseInt($(".qna-comment-count strong").text());
+      $(".qna-comment-count strong").text(countOfAnswer - 1);
     }
   });
 });

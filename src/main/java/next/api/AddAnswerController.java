@@ -40,6 +40,8 @@ public class AddAnswerController {
             contents
         );
         answerDao.insert(answer);
-        return ResponseEntity.ok().body(ApiResult.success("답변이 등록되었습니다.", answer));
+        Answer inserted = answerDao.findByAnswerId(answer.getAnswerId())
+            .orElseThrow(() -> new IllegalStateException("답변 등록에 실패했습니다."));
+        return ResponseEntity.ok().body(ApiResult.success("답변이 등록되었습니다.", inserted));
     }
 }

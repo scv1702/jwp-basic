@@ -6,7 +6,7 @@ import next.model.User;
 import java.util.List;
 
 public class UserDao {
-    JdbcTemplate jdbcTemplate = new JdbcTemplate();
+    private final JdbcTemplate jdbcTemplate = new JdbcTemplate();
 
     public void insert(User user) {
         jdbcTemplate.insert(
