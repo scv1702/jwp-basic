@@ -1,7 +1,8 @@
 package next.controller;
 
-import core.http.HttpMethod;
 import core.context.annotations.Controller;
+import core.http.HttpMethod;
+import core.web.Model;
 import core.web.annotations.RequestMapping;
 import core.web.annotations.RequestParam;
 import next.dao.QuestionDao;
@@ -19,7 +20,19 @@ public class CreateQuestionController {
     private QuestionDao questionDao = new QuestionDao();
 
     @RequestMapping(value = "/form", method = HttpMethod.GET)
-    public String questionForm() {
+    public String questionForm(
+        @RequestParam(value = "questionId", required = false) Long questionId,
+        Model model,
+        HttpSession session
+    ) {
+        if (questionId == null) {
+            return "/qna/form";
+        }
+        Question question = questionDao.findByQuestionId(questionId);
+        if (!UserSessionUtils.isSameUser(session, question.getWriter())) {
+            return "redirect:/";
+        }
+        model.addAttribute("question", question);
         return "/qna/form";
     }
 
