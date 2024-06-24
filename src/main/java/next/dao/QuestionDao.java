@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.util.List;
 
 public class QuestionDao {
-    private final JdbcTemplate jdbcTemplate = new JdbcTemplate();
+    private final JdbcTemplate jdbcTemplate = JdbcTemplate.getInstance();
     private final UserDao userDao = new UserDao();
 
     private static final String SELECT = "SELECT Q.questionId, Q.title, Q.contents, Q.createdDate, Q.countOfAnswer, " +

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class AnswerDao {
-    private final JdbcTemplate jdbcTemplate = new JdbcTemplate();
+    private final JdbcTemplate jdbcTemplate = JdbcTemplate.getInstance();
     private final QuestionDao questionDao = new QuestionDao();
     private final UserDao userDao = new UserDao();
 

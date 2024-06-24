@@ -19,13 +19,20 @@ import java.util.*;
 
 public class JdbcTemplate {
     private static final Logger log = LoggerFactory.getLogger(JdbcTemplate.class);
-
     private static final Map<Class<?>, PropertyConverter> converters = new HashMap<>();
+    private static final JdbcTemplate instance = new JdbcTemplate();
 
     static {
         converters.put(Integer.class, new IntegerConverter());
         converters.put(Long.class, new LongConverter());
         converters.put(LocalDateTime.class, new LocalDateTimeConverter());
+    }
+
+    private JdbcTemplate() {
+    }
+
+    public static JdbcTemplate getInstance() {
+        return instance;
     }
 
     private PreparedStatement createPreparedStatement(
