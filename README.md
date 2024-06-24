@@ -14,8 +14,3 @@
     3. `ModelAndView`인 경우 `ModelAndViewMethodReturnValueHandler`가 실행된다. 이는 해당 `ModelAndView`의 값으로 변경한다.
     4. `ResponseEntity`인 경우 `ResponseEntityMethodReturnValueHandler`가 실행된다. 이는 해당 값에 대해 반환 헤더와 바디 등을 설정한다.
 2. `DispatcherServlet`은 `HandlerAdaptor`로 부터 반환 받은 `ModelAndView`과 `render()`를 통해 사용자에게 응답을 보낸다.
-
-
-### 7. `next.web.qna` package의 `ShowController`는 멀티 쓰레드 상황에서 문제가 발생하는 이유에 대해 설명하라.
-
-데이터베이스에서 적절한 트랜젝션 격리 수준을 설정해두지 않았다면 `findById` 등과 같은 메소드들의 검색 결과가 유효하지 않은 값일 수 있다. 예를 들어, 한 쓰레드에서는 ID가 1인 질문을 삭제하고 있지만 다른 쓰레드에서 ID가 1인 질문을 가져와 사용자에게 보여줄 수도 있다. 그렇게 되면 이미 삭제된 질문이지만, 사용자에게 보여지게 되어 해당 질문에 대한 답변을 다는 요청을 받게될 수도 있다.
