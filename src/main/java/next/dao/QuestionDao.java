@@ -51,6 +51,13 @@ public class QuestionDao {
         );
     }
 
+    public void delete(Long questionId) {
+        jdbcTemplate.update(
+            "DELETE FROM QUESTIONS WHERE questionId=?",
+            questionId
+        );
+    }
+
     public List<Question> findAll() {
         return jdbcTemplate.select(SELECT, mapper);
     }

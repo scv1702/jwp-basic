@@ -13,33 +13,35 @@
 <div class="container" id="main">
    <div class="col-md-12 col-sm-12 col-lg-10 col-lg-offset-1">
       <div class="panel panel-default content-main">
-          <% Question question = (Question) request.getAttribute("question"); %>
-          <% if (question == null) { %>
-              <form name="question" method="post" action="/qna/create">
-                  <div class="form-group">
-                      <label for="create-title">제목</label>
-                      <input type="text" class="form-control" id="create-title" name="title" placeholder="제목"/>
-                  </div>
-                  <div class="form-group">
-                      <label for="create-contents">내용</label>
-                      <textarea name="contents" id="create-contents" rows="5" class="form-control"></textarea>
-                  </div>
-                  <button type="submit" class="btn btn-success clearfix pull-right">질문하기</button>
-              </form>
-          <% } else { %>
-              <form name="question" method="post" action="/qna/update">
-                  <input type="hidden" id="questionId" name="questionId" value=${question.questionId}>
-                  <div class="form-group">
-                      <label for="update-title">제목</label>
-                      <input type="text" class="form-control" id="update-title" name="title" value="${question.title}"/>
-                  </div>
-                  <div class="form-group">
-                      <label for="update-contents">내용</label>
-                      <textarea name="contents" id="update-contents" rows="5" class="form-control">${question.contents}</textarea>
-                  </div>
-                  <button type="submit" class="btn btn-success clearfix pull-right">질문하기</button>
-              </form>
-          <% } %>
+          <c:choose>
+              <c:when test="${empty question}">
+                  <form name="question" method="post" action="/qna/create">
+                      <div class="form-group">
+                          <label for="create-title">제목</label>
+                          <input type="text" class="form-control" id="create-title" name="title" placeholder="제목"/>
+                      </div>
+                      <div class="form-group">
+                          <label for="create-contents">내용</label>
+                          <textarea name="contents" id="create-contents" rows="5" class="form-control"></textarea>
+                      </div>
+                      <button type="submit" class="btn btn-success clearfix pull-right">질문하기</button>
+                  </form>
+              </c:when>
+              <c:otherwise>
+                  <form name="question" method="post" action="/qna/update">
+                      <input type="hidden" id="questionId" name="questionId" value=${question.questionId}>
+                      <div class="form-group">
+                          <label for="update-title">제목</label>
+                          <input type="text" class="form-control" id="update-title" name="title" value="${question.title}"/>
+                      </div>
+                      <div class="form-group">
+                          <label for="update-contents">내용</label>
+                          <textarea name="contents" id="update-contents" rows="5" class="form-control">${question.contents}</textarea>
+                      </div>
+                      <button type="submit" class="btn btn-success clearfix pull-right">질문하기</button>
+                  </form>
+              </c:otherwise>
+          </c:choose>
           <div class="clearfix" />
         </div>
     </div>

@@ -74,4 +74,13 @@ public class AnswerDao {
         );
         jdbcTemplate.delete("DELETE FROM ANSWERS WHERE answerId=?", answerId);
     }
+
+    public List<Answer> findByWriterIsNotAndQuestionId(String userId, Long questionId) {
+        return jdbcTemplate.select(
+            SELECT + " WHERE A.writer!=? AND Q.questionId=?",
+            mapper,
+            userId,
+            questionId
+        );
+    }
 }
