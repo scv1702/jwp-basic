@@ -7,11 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class JspView implements View {
+public class InternalResourceView implements View {
 
     private final String viewName;
 
-    public JspView(final String viewName) {
+    public InternalResourceView(final String viewName) {
         this.viewName = viewName;
     }
 

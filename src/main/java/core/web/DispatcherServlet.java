@@ -20,7 +20,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
     private HandlerMapping handlerMapping;
     private final HandlerAdaptor handlerAdaptor = new RequestMappingHandlerAdaptor();
-    private final ViewResolver viewResolver = new DefaultViewResolver();
+    private final ViewResolver viewResolver = new InternalResourceViewResolver();
 
     @Override
     public void init(ServletConfig config) throws ServletException {
