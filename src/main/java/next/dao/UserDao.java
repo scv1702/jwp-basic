@@ -6,6 +6,19 @@ import next.model.User;
 import java.util.List;
 
 public class UserDao {
+
+    private UserDao() {
+    }
+
+    private static UserDao instance;
+
+    public static UserDao getInstance() {
+        if (instance == null) {
+            return new UserDao();
+        }
+        return instance;
+    }
+
     private final JdbcTemplate jdbcTemplate = JdbcTemplate.getInstance();
 
     public void insert(User user) {

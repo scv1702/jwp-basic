@@ -6,6 +6,7 @@ import core.web.annotations.RequestMapping;
 import core.web.annotations.RequestParam;
 import next.dao.QuestionDao;
 import next.model.Question;
+import next.util.UserSessionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +17,8 @@ import javax.servlet.http.HttpSession;
 public class UpdateQuestionController {
 
     private static final Logger log = LoggerFactory.getLogger(UpdateQuestionController.class);
-    private QuestionDao questionDao = new QuestionDao();
+
+    private final QuestionDao questionDao = QuestionDao.getInstance();
 
     @RequestMapping(value = "/update", method = HttpMethod.POST)
     public String createQuestion(

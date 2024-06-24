@@ -4,24 +4,26 @@ import core.jdbc.ConnectionManager;
 import next.model.Answer;
 import next.model.Question;
 import next.model.User;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
-public class AnswerDaoTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-    UserDao userDao = new UserDao();
-    QuestionDao questionDao = new QuestionDao();
-    AnswerDao answerDao = new AnswerDao();
+class AnswerDaoTest {
+
+    private final UserDao userDao = UserDao.getInstance();
+    private final QuestionDao questionDao = QuestionDao.getInstance();
+    private final AnswerDao answerDao = AnswerDao.getInstance();
 
     User questionWriter = new User("scv1702", "password", "name", "email");
     User questionAnswer = new User("scv1703", "password", "name2", "email2");
     Question question = new Question(questionWriter, "title", "contents");
 
-    @Before
+    @BeforeEach
     public void setup() {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScript(new ClassPathResource("jwp.sql"));
@@ -37,7 +39,7 @@ public class AnswerDaoTest {
         Answer expected = new Answer(questionAnswer, question, "answer");
         answerDao.insert(expected);
 
-        Assert.assertNotNull(expected.getAnswerId());
+        assertNotNull(expected.getAnswerId());
     }
 
     @Test
@@ -48,7 +50,7 @@ public class AnswerDaoTest {
         expected.setContents("answer2");
         answerDao.update(expected);
 
-        Assert.assertEquals("answer2", expected.getContents());
+        assertEquals("answer2", expected.getContents());
     }
 
     @Test

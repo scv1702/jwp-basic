@@ -7,6 +7,7 @@ import core.web.annotations.RequestMapping;
 import core.web.annotations.RequestParam;
 import next.dao.UserDao;
 import next.model.User;
+import next.util.UserSessionUtils;
 
 import javax.servlet.http.HttpSession;
 
@@ -14,7 +15,7 @@ import javax.servlet.http.HttpSession;
 @RequestMapping("/users")
 public class AuthController {
 
-    private UserDao userDao = new UserDao();
+    private final UserDao userDao = UserDao.getInstance();
 
     @RequestMapping(value = "/loginForm")
     public String loginForm() {

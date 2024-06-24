@@ -9,8 +9,9 @@ import next.dao.UserDao;
 @Controller
 @RequestMapping("/")
 public class HomeController {
-    private UserDao userDao = new UserDao();
-    private QuestionDao questionDao = new QuestionDao();
+
+    private final UserDao userDao = UserDao.getInstance();
+    private final QuestionDao questionDao = QuestionDao.getInstance();
 
     @RequestMapping
     public String index(Model model) {

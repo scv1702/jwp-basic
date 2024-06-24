@@ -5,9 +5,7 @@ import core.http.HttpMethod;
 import core.http.ResponseEntity;
 import core.web.annotations.RequestMapping;
 import core.web.annotations.RequestParam;
-import next.controller.UserSessionUtils;
-import next.dao.AnswerDao;
-import next.dao.QuestionDao;
+import next.util.UserSessionUtils;
 import next.model.Question;
 import next.model.User;
 import next.service.QuestionService;
@@ -24,20 +22,11 @@ public class QuestionController {
 
     private static final Logger log = LoggerFactory.getLogger(QuestionController.class);
 
-    private QuestionDao questionDao = new QuestionDao();
-    private QuestionService questionService = new QuestionService(questionDao, new AnswerDao());
-
-    public QuestionController() {
-    }
-
-    public QuestionController(QuestionDao questionDao, QuestionService questionService) {
-        this.questionDao = questionDao;
-        this.questionService = questionService;
-    }
+    private final QuestionService questionService = QuestionService.getInstance();
 
     @RequestMapping(value = "/list", method = HttpMethod.GET)
     public ResponseEntity<ApiResult.ApiSuccessResult<List<Question>>> list() {
-        List<Question> questions = questionDao.findAll();
+        List<Question> questions = questionService.findAll();
         return ResponseEntity.ok().body(ApiResult.success(questions));
     }
 
@@ -51,7 +40,7 @@ public class QuestionController {
             return ResponseEntity.unauthorized().build();
         }
         try {
-            questionService.deleteQuestion(loginedUser, questionId);
+            questionService.delete(loginedUser, questionId);
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.badRequest().body(ApiResult.error(e.getMessage()));

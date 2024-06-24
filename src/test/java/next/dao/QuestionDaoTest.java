@@ -3,21 +3,22 @@ package next.dao;
 import core.jdbc.ConnectionManager;
 import next.model.Question;
 import next.model.User;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
 import java.util.List;
 
-public class QuestionDaoTest {
-    QuestionDao questionDao = new QuestionDao();
-    UserDao userDao = new UserDao();
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class QuestionDaoTest {
+    private final QuestionDao questionDao = QuestionDao.getInstance();
+    private final UserDao userDao = UserDao.getInstance();
     User writer = new User("scv1702", "password", "name", "email");
 
-    @Before
+    @BeforeEach
     public void setup() {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScript(new ClassPathResource("jwp.sql"));
@@ -32,7 +33,7 @@ public class QuestionDaoTest {
         questionDao.insert(expected);
 
         Question actual = questionDao.findByQuestionId(expected.getQuestionId());
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
@@ -46,14 +47,14 @@ public class QuestionDaoTest {
         questionDao.update(question);
 
         Question actual = questionDao.findByQuestionId(question.getQuestionId());
-        Assert.assertEquals("title2", actual.getTitle());
-        Assert.assertEquals("contents2", actual.getContents());
+        assertEquals("title2", actual.getTitle());
+        assertEquals("contents2", actual.getContents());
     }
 
     @Test
     public void findAll() {
         List<Question> questions = questionDao.findAll();
-        Assert.assertEquals(8, questions.size());
+        assertEquals(8, questions.size());
     }
 
     @Test
@@ -63,6 +64,6 @@ public class QuestionDaoTest {
 
         Question actual = questionDao.findByQuestionId((expected.getQuestionId()));
 
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 }

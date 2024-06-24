@@ -11,7 +11,7 @@ import next.model.User;
 @RequestMapping("/users")
 public class ProfileController {
 
-    private UserDao userDao = new UserDao();
+    private final UserDao userDao = UserDao.getInstance();
 
     @RequestMapping("/profile")
     public String profile(@RequestParam("userId") String userId, Model model) {

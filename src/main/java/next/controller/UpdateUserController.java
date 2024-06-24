@@ -7,6 +7,7 @@ import core.web.annotations.RequestMapping;
 import core.web.annotations.RequestParam;
 import next.dao.UserDao;
 import next.model.User;
+import next.util.UserSessionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,8 +16,10 @@ import javax.servlet.http.HttpSession;
 @Controller
 @RequestMapping("/users")
 public class UpdateUserController {
-    private UserDao userDao = new UserDao();
+
     private static final Logger log = LoggerFactory.getLogger(UpdateUserController.class);
+
+    private final UserDao userDao = UserDao.getInstance();
 
     @RequestMapping(value = "/updateForm", method = HttpMethod.GET)
     public String updateForm(@RequestParam("userId") String userId, HttpSession session, Model model) {

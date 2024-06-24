@@ -15,8 +15,9 @@ import org.slf4j.LoggerFactory;
 public class ListQuestionController {
 
     private static final Logger log = LoggerFactory.getLogger(ListQuestionController.class);
-    private QuestionDao questionDao = new QuestionDao();
-    private AnswerDao answerDao = new AnswerDao();
+
+    private final QuestionDao questionDao = QuestionDao.getInstance();
+    private final AnswerDao answerDao = AnswerDao.getInstance();
 
     @RequestMapping(value = "/show", method = HttpMethod.GET)
     public String list(

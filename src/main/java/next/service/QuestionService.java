@@ -10,17 +10,32 @@ import java.util.List;
 
 public class QuestionService {
 
-    private final QuestionDao questionDao;
-    private final AnswerDao answerDao;
-
-    public QuestionService(QuestionDao questionDao, AnswerDao answerDao) {
-        this.questionDao = questionDao;
-        this.answerDao = answerDao;
+    private QuestionService() {
     }
 
-    public void deleteQuestion(User loginedUser, Long questionId) {
+    private static QuestionService instance;
+
+    public static QuestionService getInstance() {
+        if (instance == null) {
+            return new QuestionService();
+        }
+        return instance;
+    }
+
+    private final QuestionDao questionDao = QuestionDao.getInstance();
+    private final AnswerDao answerDao = AnswerDao.getInstance();
+
+    public List<Question> findAll() {
+        return questionDao.findAll();
+    }
+
+    public Question findByQuestionId(Long questionId) {
+        return questionDao.findByQuestionId(questionId);
+    }
+
+    public void delete(User loginedUser, Long questionId) {
         Question question = questionDao.findByQuestionId(questionId);
-        if (!loginedUser.equals(question.getWriter())) {
+        if (!loginedUser.isSameUser(question.getWriter())) {
             throw new IllegalStateException("다른 사용자가 쓴 글을 삭제할 수 없습니다.");
         }
         String writer = question.getWriter().getUserId();

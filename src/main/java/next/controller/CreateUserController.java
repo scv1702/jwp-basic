@@ -13,8 +13,9 @@ import org.slf4j.LoggerFactory;
 @RequestMapping("/users")
 public class CreateUserController {
 
-    private UserDao userDao = new UserDao();
     private static final Logger log = LoggerFactory.getLogger(CreateUserController.class);
+
+    private final UserDao userDao = UserDao.getInstance();
 
     @RequestMapping(value = "/form")
     public String userForm() {

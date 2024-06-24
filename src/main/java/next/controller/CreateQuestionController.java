@@ -7,6 +7,7 @@ import core.web.annotations.RequestMapping;
 import core.web.annotations.RequestParam;
 import next.dao.QuestionDao;
 import next.model.Question;
+import next.util.UserSessionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +18,8 @@ import javax.servlet.http.HttpSession;
 public class CreateQuestionController {
 
     private static final Logger log = LoggerFactory.getLogger(CreateQuestionController.class);
-    private QuestionDao questionDao = new QuestionDao();
+
+    private final QuestionDao questionDao = QuestionDao.getInstance();
 
     @RequestMapping(value = "/form", method = HttpMethod.GET)
     public String questionForm(

@@ -10,19 +10,33 @@ import java.util.List;
 import java.util.Optional;
 
 public class AnswerDao {
-    private final JdbcTemplate jdbcTemplate = JdbcTemplate.getInstance();
-    private final QuestionDao questionDao = new QuestionDao();
-    private final UserDao userDao = new UserDao();
 
-    private final LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
+    private AnswerDao() {
+    }
+
+    private static AnswerDao instance;
+
+    public static AnswerDao getInstance() {
+        if (instance == null) {
+            return new AnswerDao();
+        }
+        return instance;
+    }
 
     private static final String SELECT =
         "SELECT A.answerId, A.contents ansContents, A.createdDate ansCreatedDate, A.questionId, " +
-        "U2.userId qaUserId " +
-        "FROM QUESTIONS Q "+
-        "LEFT JOIN USERS U ON Q.writer=U.userId " +
-        "JOIN ANSWERS A ON Q.questionId=A.questionId " +
-        "JOIN USERS U2 ON A.writer=U2.userId";
+            "U2.userId qaUserId " +
+            "FROM QUESTIONS Q "+
+            "LEFT JOIN USERS U ON Q.writer=U.userId " +
+            "JOIN ANSWERS A ON Q.questionId=A.questionId " +
+            "JOIN USERS U2 ON A.writer=U2.userId";
+
+    private final JdbcTemplate jdbcTemplate = JdbcTemplate.getInstance();
+
+    private final QuestionDao questionDao = QuestionDao.getInstance();
+    private final UserDao userDao = UserDao.getInstance();
+
+    private final LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
 
     private final RowMapper<Answer> mapper = (ResultSet rs) -> new Answer(
         rs.getLong("answerId"),
