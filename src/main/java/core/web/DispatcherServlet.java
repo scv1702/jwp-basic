@@ -1,33 +1,38 @@
 package core.web;
 
+import core.context.BeanFactory;
+import core.context.BeanScanner;
 import core.web.handler.Handler;
 import core.web.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
 public class DispatcherServlet extends HttpServlet {
 
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
+
     private HandlerMapping handlerMapping;
-    private final HandlerAdaptor handlerAdaptor = new RequestMappingHandlerAdaptor();
-    private final ViewResolver viewResolver = new InternalResourceViewResolver();
+    private HandlerAdaptor handlerAdaptor;
+    private ViewResolver viewResolver;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        ServletContext servletContext = config.getServletContext();
-        Map<String, Object> components = (Map<String, Object>) servletContext.getAttribute("components");
-        handlerMapping = new RequestMappingHandlerMapping(components);
+
+        BeanScanner beanScanner = new BeanScanner();
+        BeanFactory beanFactory = new BeanFactory(beanScanner.scan());
+
+        handlerMapping = new RequestMappingHandlerMapping(beanFactory);
+        handlerAdaptor = new RequestMappingHandlerAdaptor();
+        viewResolver = new InternalResourceViewResolver();
     }
 
     @Override

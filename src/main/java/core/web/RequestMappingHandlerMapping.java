@@ -1,7 +1,8 @@
 package core.web;
 
-import core.http.HttpMethod;
+import core.context.BeanFactory;
 import core.context.annotations.Controller;
+import core.http.HttpMethod;
 import core.web.annotations.RequestMapping;
 import core.web.exception.NoRequestMappingHandlerException;
 import core.web.handler.Handler;
@@ -12,17 +13,13 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class RequestMappingHandlerMapping implements HandlerMapping {
 
     private final Map<RequestMappingKey, RequestMappingHandler> requestMappingHandlers = new HashMap<>();
 
-    public RequestMappingHandlerMapping(Map<String, Object> components) {
-        Set<Object> controllers = components.values().stream()
-            .filter(component -> component.getClass().isAnnotationPresent(Controller.class))
-            .collect(Collectors.toSet());
-
+    public RequestMappingHandlerMapping(BeanFactory beanFactory) {
+        Set<Object> controllers = beanFactory.getBeansByAnnotation(Controller.class);
         for (Object controller : controllers) {
             Method[] methods = controller.getClass().getDeclaredMethods();
             for (Method method : methods) {
