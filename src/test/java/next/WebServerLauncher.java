@@ -1,13 +1,12 @@
 package next;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.startup.Tomcat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
+@Slf4j
 public class WebServerLauncher {
-    private static final Logger logger = LoggerFactory.getLogger(WebServerLauncher.class);
 
     public static void main(String[] args) throws Exception {
         String webappDirLocation = "webapp/";
@@ -15,7 +14,7 @@ public class WebServerLauncher {
         tomcat.setPort(58080);
 
         tomcat.addWebapp("/", new File(webappDirLocation).getAbsolutePath());
-        logger.info("configuring app with basedir: {}", new File("./" + webappDirLocation).getAbsolutePath());
+        log.info("configuring app with basedir: {}", new File("./" + webappDirLocation).getAbsolutePath());
 
         tomcat.start();
         tomcat.getServer().await();
