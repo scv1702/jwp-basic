@@ -1,5 +1,7 @@
 package next.dao;
 
+import core.context.annotations.Inject;
+import core.context.annotations.Repository;
 import core.jdbc.JdbcTemplate;
 import core.jdbc.RowMapper;
 import core.jdbc.converter.LocalDateTimeConverter;
@@ -9,18 +11,16 @@ import java.sql.ResultSet;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public class AnswerDao {
 
-    private AnswerDao() {
-    }
+    private QuestionDao questionDao;
+    private UserDao userDao;
 
-    private static AnswerDao instance;
-
-    public static AnswerDao getInstance() {
-        if (instance == null) {
-            return new AnswerDao();
-        }
-        return instance;
+    @Inject
+    public AnswerDao(QuestionDao questionDao, UserDao userDao) {
+        this.questionDao = questionDao;
+        this.userDao = userDao;
     }
 
     private static final String SELECT =
@@ -32,9 +32,6 @@ public class AnswerDao {
             "JOIN USERS U2 ON A.writer=U2.userId";
 
     private final JdbcTemplate jdbcTemplate = JdbcTemplate.getInstance();
-
-    private final QuestionDao questionDao = QuestionDao.getInstance();
-    private final UserDao userDao = UserDao.getInstance();
 
     private final LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
 

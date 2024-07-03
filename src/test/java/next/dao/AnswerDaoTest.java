@@ -15,9 +15,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class AnswerDaoTest {
 
-    private final UserDao userDao = UserDao.getInstance();
-    private final QuestionDao questionDao = QuestionDao.getInstance();
-    private final AnswerDao answerDao = AnswerDao.getInstance();
+    private final UserDao userDao = new JdbcUserDao();
+    private final QuestionDao questionDao = new QuestionDao(userDao);
+    private final AnswerDao answerDao = new AnswerDao(questionDao, userDao);
 
     User questionWriter = new User("scv1702", "password", "name", "email");
     User questionAnswer = new User("scv1703", "password", "name2", "email2");

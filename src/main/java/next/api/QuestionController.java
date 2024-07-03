@@ -1,6 +1,7 @@
 package next.api;
 
 import core.context.annotations.Controller;
+import core.context.annotations.Inject;
 import core.http.HttpMethod;
 import core.http.ResponseEntity;
 import core.web.annotations.RequestMapping;
@@ -22,7 +23,16 @@ public class QuestionController {
 
     private static final Logger log = LoggerFactory.getLogger(QuestionController.class);
 
-    private final QuestionService questionService = QuestionService.getInstance();
+    private final QuestionService questionService;
+
+    @Inject
+    public QuestionController(QuestionService questionService) {
+        this.questionService = questionService;
+    }
+
+    public QuestionService getQnaService() {
+        return questionService;
+    }
 
     @RequestMapping(value = "/list", method = HttpMethod.GET)
     public ResponseEntity<ApiResult.ApiSuccessResult<List<Question>>> list() {

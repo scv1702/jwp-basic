@@ -1,6 +1,7 @@
 package next.api;
 
 import core.context.annotations.Controller;
+import core.context.annotations.Inject;
 import core.http.HttpMethod;
 import core.http.ResponseEntity;
 import core.web.annotations.RequestMapping;
@@ -23,7 +24,12 @@ public class AnswerController {
 
     private static final Logger log = LoggerFactory.getLogger(AnswerController.class);
 
-    private final AnswerService answerService = AnswerService.getInstance();
+    private final AnswerService answerService;
+
+    @Inject
+    public AnswerController(AnswerService answerService) {
+        this.answerService = answerService;
+    }
 
     @RequestMapping(value = "/addAnswer", method = HttpMethod.POST)
     public ResponseEntity<?> addAnswer(

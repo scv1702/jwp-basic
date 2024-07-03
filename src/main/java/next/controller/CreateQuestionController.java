@@ -1,6 +1,7 @@
 package next.controller;
 
 import core.context.annotations.Controller;
+import core.context.annotations.Inject;
 import core.http.HttpMethod;
 import core.web.Model;
 import core.web.annotations.RequestMapping;
@@ -19,7 +20,12 @@ public class CreateQuestionController {
 
     private static final Logger log = LoggerFactory.getLogger(CreateQuestionController.class);
 
-    private final QuestionDao questionDao = QuestionDao.getInstance();
+    private final QuestionDao questionDao;
+
+    @Inject
+    public CreateQuestionController(QuestionDao questionDao) {
+        this.questionDao = questionDao;
+    }
 
     @RequestMapping(value = "/form", method = HttpMethod.GET)
     public String questionForm(

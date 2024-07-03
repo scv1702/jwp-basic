@@ -1,5 +1,7 @@
 package next.service;
 
+import core.context.annotations.Inject;
+import core.context.annotations.Service;
 import next.dao.AnswerDao;
 import next.dao.QuestionDao;
 import next.model.Answer;
@@ -8,22 +10,17 @@ import next.model.User;
 
 import java.util.List;
 
+@Service
 public class QuestionService {
 
-    private QuestionService() {
+    private final QuestionDao questionDao;
+    private final AnswerDao answerDao;
+
+    @Inject
+    public QuestionService(QuestionDao questionDao, AnswerDao answerDao) {
+        this.questionDao = questionDao;
+        this.answerDao = answerDao;
     }
-
-    private static QuestionService instance;
-
-    public static QuestionService getInstance() {
-        if (instance == null) {
-            return new QuestionService();
-        }
-        return instance;
-    }
-
-    private final QuestionDao questionDao = QuestionDao.getInstance();
-    private final AnswerDao answerDao = AnswerDao.getInstance();
 
     public List<Question> findAll() {
         return questionDao.findAll();

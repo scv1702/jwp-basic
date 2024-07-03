@@ -1,6 +1,7 @@
 package next.controller;
 
 import core.context.annotations.Controller;
+import core.context.annotations.Inject;
 import core.http.HttpMethod;
 import core.web.annotations.RequestMapping;
 import core.web.annotations.RequestParam;
@@ -18,7 +19,12 @@ public class UpdateQuestionController {
 
     private static final Logger log = LoggerFactory.getLogger(UpdateQuestionController.class);
 
-    private final QuestionDao questionDao = QuestionDao.getInstance();
+    private final QuestionDao questionDao;
+
+    @Inject
+    public UpdateQuestionController(QuestionDao questionDao) {
+        this.questionDao = questionDao;
+    }
 
     @RequestMapping(value = "/update", method = HttpMethod.POST)
     public String createQuestion(

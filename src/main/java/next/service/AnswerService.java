@@ -1,27 +1,24 @@
 package next.service;
 
+import core.context.annotations.Inject;
+import core.context.annotations.Service;
 import next.dao.AnswerDao;
 import next.model.Answer;
 import next.model.User;
 
 import java.util.Optional;
 
+@Service
 public class AnswerService {
 
-    private static AnswerService instance;
+    private final AnswerDao answerDao;
+    private final QuestionService questionService;
 
-    private AnswerService() {
+    @Inject
+    public AnswerService(AnswerDao answerDao, QuestionService questionService) {
+        this.answerDao = answerDao;
+        this.questionService = questionService;
     }
-
-    public static AnswerService getInstance() {
-        if (instance == null) {
-            return new AnswerService();
-        }
-        return instance;
-    }
-
-    private final AnswerDao answerDao = AnswerDao.getInstance();
-    private final QuestionService questionService = QuestionService.getInstance();
 
     public Answer insert(User writer, Long questionId, String contents) {
         Answer answer = new Answer(

@@ -1,5 +1,6 @@
 package next.controller;
 
+import core.context.annotations.Inject;
 import core.web.Model;
 import core.context.annotations.Controller;
 import core.web.annotations.RequestMapping;
@@ -11,7 +12,12 @@ import next.model.User;
 @RequestMapping("/users")
 public class ProfileController {
 
-    private final UserDao userDao = UserDao.getInstance();
+    private final UserDao userDao;
+
+    @Inject
+    public ProfileController(UserDao userDao) {
+        this.userDao = userDao;
+    }
 
     @RequestMapping("/profile")
     public String profile(@RequestParam("userId") String userId, Model model) {

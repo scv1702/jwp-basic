@@ -1,5 +1,6 @@
 package next.controller;
 
+import core.context.annotations.Inject;
 import core.web.Model;
 import core.http.HttpMethod;
 import core.context.annotations.Controller;
@@ -15,7 +16,12 @@ import javax.servlet.http.HttpSession;
 @RequestMapping("/users")
 public class AuthController {
 
-    private final UserDao userDao = UserDao.getInstance();
+    private final UserDao userDao;
+
+    @Inject
+    public AuthController(UserDao userDao) {
+        this.userDao = userDao;
+    }
 
     @RequestMapping(value = "/loginForm")
     public String loginForm() {

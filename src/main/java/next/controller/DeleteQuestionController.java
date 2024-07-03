@@ -1,6 +1,7 @@
 package next.controller;
 
 import core.context.annotations.Controller;
+import core.context.annotations.Inject;
 import core.http.HttpMethod;
 import core.web.Model;
 import core.web.annotations.RequestMapping;
@@ -19,7 +20,12 @@ public class DeleteQuestionController {
 
     private static final Logger log = LoggerFactory.getLogger(DeleteQuestionController.class);
 
-    private final QuestionService questionService = QuestionService.getInstance();
+    private final QuestionService questionService;
+
+    @Inject
+    public DeleteQuestionController(QuestionService questionService) {
+        this.questionService = questionService;
+    }
 
     @RequestMapping(value = "/delete", method = HttpMethod.POST)
     public String deleteQuestion(

@@ -1,5 +1,6 @@
 package next.controller;
 
+import core.context.annotations.Inject;
 import core.http.HttpMethod;
 import core.context.annotations.Controller;
 import core.web.annotations.RequestMapping;
@@ -15,7 +16,12 @@ public class CreateUserController {
 
     private static final Logger log = LoggerFactory.getLogger(CreateUserController.class);
 
-    private final UserDao userDao = UserDao.getInstance();
+    private final UserDao userDao;
+
+    @Inject
+    public CreateUserController(UserDao userDao) {
+        this.userDao = userDao;
+    }
 
     @RequestMapping(value = "/form")
     public String userForm() {

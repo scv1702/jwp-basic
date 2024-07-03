@@ -13,7 +13,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class UserDaoTest {
-    private final UserDao userDao = UserDao.getInstance();
+    private final UserDao userDao = new JdbcUserDao();
 
     @BeforeEach
     public void setup() {

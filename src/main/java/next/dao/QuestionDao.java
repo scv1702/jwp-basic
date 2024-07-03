@@ -1,5 +1,7 @@
 package next.dao;
 
+import core.context.annotations.Inject;
+import core.context.annotations.Repository;
 import core.jdbc.JdbcTemplate;
 import core.jdbc.RowMapper;
 import core.jdbc.converter.LocalDateTimeConverter;
@@ -8,18 +10,14 @@ import next.model.Question;
 import java.sql.ResultSet;
 import java.util.List;
 
+@Repository
 public class QuestionDao {
 
-    private QuestionDao() {
-    }
+    private UserDao userDao;
 
-    private static QuestionDao instance;
-
-    public static QuestionDao getInstance() {
-        if (instance == null) {
-            return new QuestionDao();
-        }
-        return instance;
+    @Inject
+    public QuestionDao(UserDao userDao) {
+        this.userDao = userDao;
     }
 
     private static final String SELECT = "SELECT Q.questionId, Q.title, Q.contents, Q.createdDate, Q.countOfAnswer, " +
@@ -28,8 +26,6 @@ public class QuestionDao {
         "LEFT JOIN USERS U ON Q.writer=U.userId";
 
     private final JdbcTemplate jdbcTemplate = JdbcTemplate.getInstance();
-
-    private final UserDao userDao = UserDao.getInstance();
 
     private final LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
 

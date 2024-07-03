@@ -1,5 +1,6 @@
 package next.controller;
 
+import core.context.annotations.Inject;
 import core.web.Model;
 import core.context.annotations.Controller;
 import core.web.annotations.RequestMapping;
@@ -10,8 +11,14 @@ import next.dao.UserDao;
 @RequestMapping("/")
 public class HomeController {
 
-    private final UserDao userDao = UserDao.getInstance();
-    private final QuestionDao questionDao = QuestionDao.getInstance();
+    private final UserDao userDao;
+    private final QuestionDao questionDao;
+
+    @Inject
+    public HomeController(UserDao userDao, QuestionDao questionDao) {
+        this.userDao = userDao;
+        this.questionDao = questionDao;
+    }
 
     @RequestMapping
     public String index(Model model) {

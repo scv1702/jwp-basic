@@ -1,6 +1,7 @@
 package next.controller;
 
 import core.context.annotations.Controller;
+import core.context.annotations.Inject;
 import core.http.HttpMethod;
 import core.web.Model;
 import core.web.annotations.RequestMapping;
@@ -16,8 +17,14 @@ public class ListQuestionController {
 
     private static final Logger log = LoggerFactory.getLogger(ListQuestionController.class);
 
-    private final QuestionDao questionDao = QuestionDao.getInstance();
-    private final AnswerDao answerDao = AnswerDao.getInstance();
+    private final QuestionDao questionDao;
+    private final AnswerDao answerDao;
+
+    @Inject
+    public ListQuestionController(QuestionDao questionDao, AnswerDao answerDao) {
+        this.questionDao = questionDao;
+        this.answerDao = answerDao;
+    }
 
     @RequestMapping(value = "/show", method = HttpMethod.GET)
     public String list(

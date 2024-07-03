@@ -1,5 +1,6 @@
 package next.controller;
 
+import core.context.annotations.Inject;
 import core.web.Model;
 import core.http.HttpMethod;
 import core.context.annotations.Controller;
@@ -19,7 +20,12 @@ public class UpdateUserController {
 
     private static final Logger log = LoggerFactory.getLogger(UpdateUserController.class);
 
-    private final UserDao userDao = UserDao.getInstance();
+    private final UserDao userDao;
+
+    @Inject
+    public UpdateUserController(UserDao userDao) {
+        this.userDao = userDao;
+    }
 
     @RequestMapping(value = "/updateForm", method = HttpMethod.GET)
     public String updateForm(@RequestParam("userId") String userId, HttpSession session, Model model) {
