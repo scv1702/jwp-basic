@@ -1,4 +1,4 @@
-package core.context;
+package core.bean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,8 +11,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static core.context.BeanFactoryUtils.findConcreteClass;
-import static core.context.BeanFactoryUtils.getInjectedConstructor;
+import static core.bean.BeanFactoryUtils.findConcreteClass;
+import static core.bean.BeanFactoryUtils.getInjectedConstructor;
 
 public class BeanFactory {
 

@@ -1,8 +1,8 @@
 package next.controller;
 
-import core.context.annotations.Inject;
+import core.bean.annotations.Inject;
 import core.http.HttpMethod;
-import core.context.annotations.Controller;
+import core.bean.annotations.Controller;
 import core.web.annotations.RequestMapping;
 import core.web.annotations.RequestParam;
 import next.dao.UserDao;

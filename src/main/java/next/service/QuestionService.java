@@ -1,7 +1,7 @@
 package next.service;
 
-import core.context.annotations.Inject;
-import core.context.annotations.Service;
+import core.bean.annotations.Inject;
+import core.bean.annotations.Service;
 import next.dao.AnswerDao;
 import next.dao.QuestionDao;
 import next.model.Answer;

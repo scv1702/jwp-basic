@@ -1,6 +1,6 @@
-package core.context;
+package core.bean;
 
-import core.context.annotations.Component;
+import core.bean.annotations.Component;
 import org.reflections.Reflections;
 
 import java.util.Set;

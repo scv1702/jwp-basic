@@ -1,7 +1,7 @@
 package core.web;
 
-import core.context.BeanFactory;
-import core.context.annotations.Controller;
+import core.bean.BeanFactory;
+import core.bean.annotations.Controller;
 import core.http.HttpMethod;
 import core.web.annotations.RequestMapping;
 import core.web.exception.NoRequestMappingHandlerException;

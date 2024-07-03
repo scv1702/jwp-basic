@@ -1,6 +1,6 @@
 package next.dao;
 
-import core.context.annotations.Repository;
+import core.bean.annotations.Repository;
 import core.jdbc.JdbcTemplate;
 import next.model.User;
 

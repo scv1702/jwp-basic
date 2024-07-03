@@ -1,7 +1,7 @@
 package next.dao;
 
-import core.context.annotations.Inject;
-import core.context.annotations.Repository;
+import core.bean.annotations.Inject;
+import core.bean.annotations.Repository;
 import core.jdbc.JdbcTemplate;
 import core.jdbc.RowMapper;
 import core.jdbc.converter.LocalDateTimeConverter;

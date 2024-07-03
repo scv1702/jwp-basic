@@ -1,7 +1,7 @@
 package next.api;
 
-import core.context.annotations.Controller;
-import core.context.annotations.Inject;
+import core.bean.annotations.Controller;
+import core.bean.annotations.Inject;
 import core.http.HttpMethod;
 import core.http.ResponseEntity;
 import core.web.annotations.RequestMapping;

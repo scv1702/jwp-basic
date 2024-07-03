@@ -1,7 +1,7 @@
-package core.context;
+package core.bean;
 
-import core.context.annotations.Inject;
-import core.context.annotations.Primary;
+import core.bean.annotations.Inject;
+import core.bean.annotations.Primary;
 
 import java.lang.reflect.Constructor;
 import java.util.Set;

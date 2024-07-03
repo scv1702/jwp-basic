@@ -1,7 +1,7 @@
 package core.web;
 
-import core.context.BeanFactory;
-import core.context.BeanScanner;
+import core.bean.BeanFactory;
+import core.bean.BeanScanner;
 import core.web.handler.Handler;
 import core.web.view.View;
 import org.slf4j.Logger;
