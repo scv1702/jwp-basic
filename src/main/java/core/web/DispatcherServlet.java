@@ -27,8 +27,8 @@ public class DispatcherServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
 
-        BeanScanner beanScanner = new BeanScanner();
-        BeanFactory beanFactory = new BeanFactory(beanScanner.scan());
+        BeanFactory beanFactory = new BeanFactory(new BeanScanner());
+        beanFactory.initialize();
 
         handlerMapping = new RequestMappingHandlerMapping(beanFactory);
         handlerAdaptor = new RequestMappingHandlerAdaptor();

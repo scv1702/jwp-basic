@@ -5,10 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static core.bean.BeanFactoryUtils.findConcreteClass;
@@ -18,13 +15,14 @@ public class BeanFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(BeanFactory.class);
 
-    private final Set<Class<?>> beanTypes;
+    private final Set<Class<?>> beanTypes = new HashSet<>();
 
     private final Map<Class<?>, Object> beans = new HashMap<>();
 
-    public BeanFactory(Set<Class<?>> beanTypes) {
-        this.beanTypes = beanTypes;
-        initialize();
+    private final BeanScanner beanScanner;
+
+    public BeanFactory(BeanScanner beanScanner) {
+        this.beanScanner = beanScanner;
     }
 
     @SuppressWarnings("unchecked")
@@ -39,7 +37,10 @@ public class BeanFactory {
             .collect(Collectors.toSet());
     }
 
-    private void initialize() {
+    public void initialize() {
+        //TODO: 현재 @Configuration으로 Bean 등록 시 의존 관계 설정이 불가능
+        beanScanner.scanBeans().forEach(bean -> beans.put(bean.getClass(), bean));
+        beanTypes.addAll(beanScanner.scanComponents());
         for (Class<?> beanType : beanTypes) {
             if (beanType.isAnnotation()) {
                 continue;
@@ -57,17 +58,10 @@ public class BeanFactory {
         if (beans.containsKey(beanType)) {
             return beans.get(beanType);
         }
-        Object bean = createBean(getInjectedConstructor(beanType));
+        Constructor<?> constructor = getInjectedConstructor(beanType);
+        Object bean = BeanUtils.createInstance(constructor, resolveParameters(constructor));
         beans.put(beanType, bean);
         return bean;
-    }
-
-    private Object createBean(Constructor<?> constructor) {
-        try {
-            return constructor.newInstance(resolveParameters(constructor));
-        } catch (Exception exception) {
-            throw new IllegalStateException("Bean initialization failed for " + constructor.getName(), exception);
-        }
     }
 
     private Object[] resolveParameters(Constructor<?> constructor) {
