@@ -1,6 +1,6 @@
 package core.web;
 
-import core.bean.BeanFactory;
+import core.ApplicationContext;
 import core.bean.annotations.Controller;
 import core.http.HttpMethod;
 import core.web.annotations.RequestMapping;
@@ -12,26 +12,28 @@ import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class RequestMappingHandlerMapping implements HandlerMapping {
 
     private final Map<RequestMappingKey, RequestMappingHandler> requestMappingHandlers = new HashMap<>();
 
-    public RequestMappingHandlerMapping(BeanFactory beanFactory) {
-        Set<Object> controllers = beanFactory.getBeansByAnnotation(Controller.class);
-        for (Object controller : controllers) {
-            Method[] methods = controller.getClass().getDeclaredMethods();
-            for (Method method : methods) {
-                RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
-                if (requestMapping == null) {
-                    continue;
-                }
-                String uri = getBaseRequestMappingValue(controller) + requestMapping.value();
-                requestMappingHandlers.put(
-                    new RequestMappingKey(uri, requestMapping.method()),
-                    new RequestMappingHandler(controller, method));
+    public RequestMappingHandlerMapping(ApplicationContext ac) {
+        ac.getBeans().stream()
+            .filter(bean -> bean.getClass().isAnnotationPresent(Controller.class))
+            .forEach(this::addHandler);
+    }
+
+    private void addHandler(Object controller) {
+        Method[] methods = controller.getClass().getDeclaredMethods();
+        for (Method method : methods) {
+            RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+            if (requestMapping == null) {
+                continue;
             }
+            String uri = getBaseRequestMappingValue(controller) + requestMapping.value();
+            requestMappingHandlers.put(
+                new RequestMappingKey(uri, requestMapping.method()),
+                new RequestMappingHandler(controller, method));
         }
     }
 
