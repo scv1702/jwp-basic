@@ -1,9 +1,7 @@
 package core.bean;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -12,9 +10,8 @@ import static core.bean.BeanFactoryUtils.findConcreteClass;
 import static core.bean.BeanFactoryUtils.getInjectedConstructor;
 import static core.bean.BeanUtils.createInstance;
 
+@Slf4j
 public class BeanFactory {
-
-    private static final Logger logger = LoggerFactory.getLogger(BeanFactory.class);
 
     private final Set<Class<?>> beanTypes = new HashSet<>();
 
@@ -37,11 +34,8 @@ public class BeanFactory {
         return (T) beans.get(beanType);
     }
 
-    public Set<Object> getBeansByAnnotation(Class<? extends Annotation> annotation) {
-        return beans.keySet().stream()
-            .filter(beanType -> beanType.isAnnotationPresent(annotation))
-            .map(beans::get)
-            .collect(Collectors.toSet());
+    public Set<Object> getBeans() {
+        return new HashSet<>(beans.values());
     }
 
     public void initialize() {
@@ -54,7 +48,7 @@ public class BeanFactory {
         String beanNames = beans.keySet().stream()
             .map(Class::getName)
             .collect(Collectors.joining(", "));
-        logger.info("Initialized Beans : {}", beanNames);
+        log.info("Initialized {} Beans : {}", beans.size(), beanNames);
     }
 
     Object initializeBean(final Class<?> beanType) {

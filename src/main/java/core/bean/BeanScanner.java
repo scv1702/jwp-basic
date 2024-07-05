@@ -1,9 +1,10 @@
 package core.bean;
 
-import core.bean.annotations.Bean;
-import core.bean.annotations.Component;
-import core.bean.annotations.Configuration;
+import core.bean.annotations.*;
 import org.reflections.Reflections;
+import org.reflections.scanners.Scanners;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -13,12 +14,13 @@ public class BeanScanner {
 
     private final Reflections reflections;
 
-    public BeanScanner() {
-        this.reflections = new Reflections();
-    }
-
     public BeanScanner(String basePackage) {
-        this.reflections = new Reflections(basePackage);
+        this.reflections = new Reflections(
+            new ConfigurationBuilder()
+                .forPackages(basePackage)
+                .setScanners(Scanners.TypesAnnotated)
+                .filterInputsBy(new FilterBuilder().includePackage(basePackage))
+        );
     }
 
     public Set<Object> scanBeans() {
@@ -42,6 +44,11 @@ public class BeanScanner {
     }
 
     public Set<Class<?>> scanComponents() {
-        return reflections.getTypesAnnotatedWith(Component.class);
+        Set<Class<?>> components = new HashSet<>();
+        components.addAll(reflections.getTypesAnnotatedWith(Component.class));
+        components.addAll(reflections.getTypesAnnotatedWith(Service.class));
+        components.addAll(reflections.getTypesAnnotatedWith(Controller.class));
+        components.addAll(reflections.getTypesAnnotatedWith(Repository.class));
+        return components;
     }
 }
