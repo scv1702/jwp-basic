@@ -5,11 +5,11 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static core.bean.BeanFactoryUtils.*;
+import static core.bean.BeanFactoryUtils.findConcreteClass;
+import static core.bean.BeanFactoryUtils.getInjectedConstructor;
 import static core.bean.BeanUtils.createInstance;
 
 public class BeanFactory {
@@ -22,18 +22,24 @@ public class BeanFactory {
 
     private final BeanScanner beanScanner;
 
+    private final List<Injector> injectors;
+
     public BeanFactory(BeanScanner beanScanner) {
         this.beanScanner = beanScanner;
+        this.injectors = Arrays.asList(
+            new FieldInjector(this),
+            new SetterInjector(this)
+        );
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getBean(Class<T> clazz) {
-        return (T) beans.get(clazz);
+    public <T> T getBean(Class<T> beanType) {
+        return (T) beans.get(beanType);
     }
 
     public Set<Object> getBeansByAnnotation(Class<? extends Annotation> annotation) {
         return beans.keySet().stream()
-            .filter(clazz -> clazz.isAnnotationPresent(annotation))
+            .filter(beanType -> beanType.isAnnotationPresent(annotation))
             .map(beans::get)
             .collect(Collectors.toSet());
     }
@@ -42,56 +48,34 @@ public class BeanFactory {
         //TODO: 현재 @Configuration으로 Bean 등록 시 의존 관계 설정이 불가능
         beanScanner.scanBeans().forEach(bean -> beans.put(bean.getClass(), bean));
         beanTypes.addAll(beanScanner.scanComponents());
-        for (Class<?> beanType : beanTypes) {
-            if (beanType.isAnnotation()) {
-                continue;
-            }
-            initializeBean(beanType);
-        }
+        beanTypes.stream()
+            .filter(beanType -> !beanType.isAnnotation())
+            .forEach(this::initializeBean);
         String beanNames = beans.keySet().stream()
             .map(Class::getName)
-            .reduce((a, b) -> a + ", " + b)
-            .orElse("");
+            .collect(Collectors.joining(", "));
         logger.info("Initialized Beans : {}", beanNames);
     }
 
-    private Object initializeBean(Class<?> beanType) {
+    Object initializeBean(final Class<?> beanType) {
         if (beans.containsKey(beanType)) {
             return beans.get(beanType);
         }
-
-        final Constructor<?> constructor = getInjectedConstructor(beanType);
-
-        // 1. 생성자 주입
-        Object bean = createInstance(constructor, resolveParameters(constructor));
-
-        // 2. 필드 주입
-        getInjectedFields(beanType)
-            .forEach(field -> {
-                Class<?> fieldType = field.getType();
-                injectField(field, bean, initializeBean(findConcreteClass(fieldType, beanTypes)));
-            });
-
-        // 3. Setter 주입
-        getInjectedSetters(beanType)
-            .forEach(method -> injectSetter(method, bean, resolveParameters(method)));
-
+        Object bean = createBean(beanType);
+        injectors.forEach(injector -> injector.inject(bean));
         beans.put(beanType, bean);
-
         return bean;
     }
 
-    private Object[] resolveParameters(Constructor<?> constructor) {
-        return Arrays.stream(constructor.getParameterTypes())
-            .map(parameterType -> findConcreteClass(parameterType, beanTypes))
+    Object[] getInjectedBeans(final Class<?>[] beanTypes) {
+        return Arrays.stream(beanTypes)
+            .map(beanType -> findConcreteClass(beanType, this.beanTypes))
             .map(this::initializeBean)
             .toArray();
     }
 
-    private Object[] resolveParameters(Method method) {
-        return Arrays.stream(method.getParameterTypes())
-            .map(parameterType -> findConcreteClass(parameterType, beanTypes))
-            .map(this::initializeBean)
-            .toArray();
+    private Object createBean(Class<?> beanType) {
+        final Constructor<?> constructor = getInjectedConstructor(findConcreteClass(beanType, beanTypes));
+        return createInstance(constructor, getInjectedBeans(constructor.getParameterTypes()));
     }
 }
