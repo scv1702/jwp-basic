@@ -10,12 +10,12 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<org.springframework.version>4.2.5.RELEASE</org.springframework.version>
+		<org.springframework.version>6.1.10</org.springframework.version>
 		<tomcat.version>8.0.53</tomcat.version>
 	</properties>
 
 	<dependencies>
-		<!-- unit testing -->
+		<!-- testing -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
@@ -34,6 +34,13 @@
 			<version>5.12.0</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<version>3.26.0</version>
+			<scope>test</scope>
+		</dependency>
+
 
 		<!-- servlet -->
 		<dependency>

@@ -17,6 +17,10 @@ public class BeanScanner {
         this.reflections = new Reflections();
     }
 
+    public BeanScanner(String basePackage) {
+        this.reflections = new Reflections(basePackage);
+    }
+
     public Set<Object> scanBeans() {
         Set<Object> beans = new HashSet<>();
         Set<Class<?>> configurations = reflections.getTypesAnnotatedWith(Configuration.class);

@@ -5,11 +5,12 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static core.bean.BeanFactoryUtils.findConcreteClass;
-import static core.bean.BeanFactoryUtils.getInjectedConstructor;
+import static core.bean.BeanFactoryUtils.*;
+import static core.bean.BeanUtils.createInstance;
 
 public class BeanFactory {
 
@@ -58,14 +59,37 @@ public class BeanFactory {
         if (beans.containsKey(beanType)) {
             return beans.get(beanType);
         }
-        Constructor<?> constructor = getInjectedConstructor(beanType);
-        Object bean = BeanUtils.createInstance(constructor, resolveParameters(constructor));
+
+        final Constructor<?> constructor = getInjectedConstructor(beanType);
+
+        // 1. 생성자 주입
+        Object bean = createInstance(constructor, resolveParameters(constructor));
+
+        // 2. 필드 주입
+        getInjectedFields(beanType)
+            .forEach(field -> {
+                Class<?> fieldType = field.getType();
+                injectField(field, bean, initializeBean(findConcreteClass(fieldType, beanTypes)));
+            });
+
+        // 3. Setter 주입
+        getInjectedSetters(beanType)
+            .forEach(method -> injectSetter(method, bean, resolveParameters(method)));
+
         beans.put(beanType, bean);
+
         return bean;
     }
 
     private Object[] resolveParameters(Constructor<?> constructor) {
         return Arrays.stream(constructor.getParameterTypes())
+            .map(parameterType -> findConcreteClass(parameterType, beanTypes))
+            .map(this::initializeBean)
+            .toArray();
+    }
+
+    private Object[] resolveParameters(Method method) {
+        return Arrays.stream(method.getParameterTypes())
             .map(parameterType -> findConcreteClass(parameterType, beanTypes))
             .map(this::initializeBean)
             .toArray();
