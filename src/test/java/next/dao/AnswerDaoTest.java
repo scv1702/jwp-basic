@@ -1,5 +1,6 @@
 package next.dao;
 
+import core.bean.annotations.Inject;
 import core.jdbc.ConnectionManager;
 import next.model.Answer;
 import next.model.Question;
@@ -15,9 +16,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class AnswerDaoTest {
 
-    private final UserDao userDao = new JdbcUserDao();
-    private final QuestionDao questionDao = new QuestionDao(userDao);
-    private final AnswerDao answerDao = new AnswerDao(questionDao, userDao);
+    @Inject
+    private UserDao userDao;
+
+    @Inject
+    private QuestionDao questionDao;
+
+    @Inject
+    private AnswerDao answerDao;
 
     User questionWriter = new User("scv1702", "password", "name", "email");
     User questionAnswer = new User("scv1703", "password", "name2", "email2");

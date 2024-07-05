@@ -1,13 +1,13 @@
 package core.jdbc;
 
+import core.bean.annotations.Component;
 import core.jdbc.annotations.GeneratedValue;
 import core.jdbc.annotations.Id;
 import core.jdbc.converter.IntegerConverter;
 import core.jdbc.converter.LocalDateTimeConverter;
 import core.jdbc.converter.LongConverter;
 import core.jdbc.converter.PropertyConverter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -17,10 +17,10 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.*;
 
+@Slf4j
+@Component
 public class JdbcTemplate {
-    private static final Logger log = LoggerFactory.getLogger(JdbcTemplate.class);
     private static final Map<Class<?>, PropertyConverter> converters = new HashMap<>();
-    private static final JdbcTemplate instance = new JdbcTemplate();
 
     static {
         converters.put(Integer.class, new IntegerConverter());
@@ -28,13 +28,7 @@ public class JdbcTemplate {
         converters.put(LocalDateTime.class, new LocalDateTimeConverter());
     }
 
-    private JdbcTemplate() {
-    }
-
-    public static JdbcTemplate getInstance() {
-        return instance;
-    }
-
+    @SuppressWarnings("unchecked")
     private PreparedStatement createPreparedStatement(
         Connection conn, 
         String sql, 

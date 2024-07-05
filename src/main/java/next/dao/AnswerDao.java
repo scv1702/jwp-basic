@@ -14,11 +14,13 @@ import java.util.Optional;
 @Repository
 public class AnswerDao {
 
+    private final JdbcTemplate jdbcTemplate;
     private QuestionDao questionDao;
     private UserDao userDao;
 
     @Inject
-    public AnswerDao(QuestionDao questionDao, UserDao userDao) {
+    public AnswerDao(JdbcTemplate jdbcTemplate, QuestionDao questionDao, UserDao userDao) {
+        this.jdbcTemplate = jdbcTemplate;
         this.questionDao = questionDao;
         this.userDao = userDao;
     }
@@ -30,8 +32,6 @@ public class AnswerDao {
             "LEFT JOIN USERS U ON Q.writer=U.userId " +
             "JOIN ANSWERS A ON Q.questionId=A.questionId " +
             "JOIN USERS U2 ON A.writer=U2.userId";
-
-    private final JdbcTemplate jdbcTemplate = JdbcTemplate.getInstance();
 
     private final LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
 

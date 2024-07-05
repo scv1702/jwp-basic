@@ -13,19 +13,19 @@ import java.util.List;
 @Repository
 public class QuestionDao {
 
+    private final JdbcTemplate jdbcTemplate;
     private UserDao userDao;
 
     @Inject
-    public QuestionDao(UserDao userDao) {
+    public QuestionDao(JdbcTemplate jdbcTemplate, UserDao userDao) {
         this.userDao = userDao;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     private static final String SELECT = "SELECT Q.questionId, Q.title, Q.contents, Q.createdDate, Q.countOfAnswer, " +
         "U.userId " +
         "FROM QUESTIONS Q "+
         "LEFT JOIN USERS U ON Q.writer=U.userId";
-
-    private final JdbcTemplate jdbcTemplate = JdbcTemplate.getInstance();
 
     private final LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
 

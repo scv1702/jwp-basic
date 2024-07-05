@@ -1,5 +1,6 @@
 package next.dao;
 
+import core.bean.annotations.Inject;
 import core.jdbc.ConnectionManager;
 import next.model.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +14,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class UserDaoTest {
-    private final UserDao userDao = new JdbcUserDao();
+
+    @Inject
+    private UserDao userDao;
 
     @BeforeEach
     public void setup() {
