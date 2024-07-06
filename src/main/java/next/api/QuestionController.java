@@ -6,22 +6,20 @@ import core.http.HttpMethod;
 import core.http.ResponseEntity;
 import core.web.annotations.RequestMapping;
 import core.web.annotations.RequestParam;
-import next.util.UserSessionUtils;
+import lombok.extern.slf4j.Slf4j;
 import next.model.Question;
 import next.model.User;
 import next.service.QuestionService;
 import next.util.ApiResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import next.util.UserSessionUtils;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
 @RequestMapping("/api/qna")
+@Slf4j
 public class QuestionController {
-
-    private static final Logger log = LoggerFactory.getLogger(QuestionController.class);
 
     private final QuestionService questionService;
 

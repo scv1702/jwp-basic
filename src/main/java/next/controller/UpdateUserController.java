@@ -1,24 +1,22 @@
 package next.controller;
 
-import core.bean.annotations.Inject;
-import core.web.Model;
-import core.http.HttpMethod;
 import core.bean.annotations.Controller;
+import core.bean.annotations.Inject;
+import core.http.HttpMethod;
+import core.web.Model;
 import core.web.annotations.RequestMapping;
 import core.web.annotations.RequestParam;
+import lombok.extern.slf4j.Slf4j;
 import next.dao.UserDao;
 import next.model.User;
 import next.util.UserSessionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/users")
+@Slf4j
 public class UpdateUserController {
-
-    private static final Logger log = LoggerFactory.getLogger(UpdateUserController.class);
 
     private final UserDao userDao;
 

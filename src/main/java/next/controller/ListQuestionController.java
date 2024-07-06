@@ -6,16 +6,14 @@ import core.http.HttpMethod;
 import core.web.Model;
 import core.web.annotations.RequestMapping;
 import core.web.annotations.RequestParam;
+import lombok.extern.slf4j.Slf4j;
 import next.dao.AnswerDao;
 import next.dao.QuestionDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Controller
 @RequestMapping("/qna")
+@Slf4j
 public class ListQuestionController {
-
-    private static final Logger log = LoggerFactory.getLogger(ListQuestionController.class);
 
     private final QuestionDao questionDao;
     private final AnswerDao answerDao;

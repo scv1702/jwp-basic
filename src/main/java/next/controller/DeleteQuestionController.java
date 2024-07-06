@@ -6,19 +6,17 @@ import core.http.HttpMethod;
 import core.web.Model;
 import core.web.annotations.RequestMapping;
 import core.web.annotations.RequestParam;
+import lombok.extern.slf4j.Slf4j;
 import next.model.User;
 import next.service.QuestionService;
 import next.util.UserSessionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/qna")
+@Slf4j
 public class DeleteQuestionController {
-
-    private static final Logger log = LoggerFactory.getLogger(DeleteQuestionController.class);
 
     private final QuestionService questionService;
 
