@@ -1,24 +1,35 @@
 package core.bean;
 
 import core.bean.example.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DependencyInjectionTest {
 
-    private final BeanScanner beanScanner = new BeanScanner("core.bean.example");
-    private final BeanFactory beanFactory = new BeanFactory(beanScanner);
+
+    private final BeanFactory beanFactory = new BeanFactory();
+    private final List<BeanScanner> scanners = List.of(
+        new ClasspathBeanScanner("core.bean.example", beanFactory),
+        new AnnotatedBeanScanner("core.bean.example", beanFactory)
+    );
+
+    @BeforeEach
+    void setUp() {
+        scanners.forEach(BeanScanner::scan);
+        beanFactory.initialize();
+    }
 
     @Test
     void initialize() {
-        beanFactory.initialize();
-
         assertThat(beanFactory.getBean(BaseInjectionExample.class)).isNotNull();
         assertThat(beanFactory.getBean(ConstructorInjectionExample.class)).isNotNull();
         assertThat(beanFactory.getBean(FieldInjectionExample.class)).isNotNull();
         assertThat(beanFactory.getBean(SetterInjectionExample.class)).isNotNull();
-        assertThat(beanFactory.getBean(ConstructorInjectionExample.class)).isNotNull();
+        assertThat(beanFactory.getBean(ComplexInjectionExample.class)).isNotNull();
 
         ConstructorInjectionExample ex1 = beanFactory.getBean(ConstructorInjectionExample.class);
         assertThat(ex1.getBaseInjectionExample()).isNotNull();
@@ -33,5 +44,7 @@ class DependencyInjectionTest {
         assertThat(ex4.getConstructorInjectionExample()).isNotNull();
         assertThat(ex4.getFieldInjectionExample()).isNotNull();
         assertThat(ex4.getSetterInjectionExample()).isNotNull();
+
+        assertThat(beanFactory.getBean(String.class)).isEqualTo("Hello, World!");
     }
 }

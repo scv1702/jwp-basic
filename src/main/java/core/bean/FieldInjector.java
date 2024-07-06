@@ -20,11 +20,11 @@ public class FieldInjector implements Injector {
         getInjectedFields(beanType)
             .forEach(field -> {
                 Class<?> fieldType = field.getType();
-                injectField(field, bean, beanFactory.initializeBean(fieldType));
+                injectField(field, bean, beanFactory.getBean(fieldType));
             });
     }
 
-    public static void injectField(final Field field, final Object bean, final Object value) {
+    private void injectField(final Field field, final Object bean, final Object value) {
         try {
             field.setAccessible(true);
             field.set(bean, value);
@@ -33,7 +33,7 @@ public class FieldInjector implements Injector {
         }
     }
 
-    public static Stream<Field> getInjectedFields(final Class<?> clazz) {
+    private Stream<Field> getInjectedFields(final Class<?> clazz) {
         return Arrays.stream(clazz.getDeclaredFields())
             .filter(field -> field.isAnnotationPresent(Inject.class));
     }

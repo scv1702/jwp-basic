@@ -9,15 +9,15 @@ public class BeanUtils {
         try {
             return constructor.newInstance(parameters);
         } catch (Exception exception) {
-            throw new IllegalStateException("Bean creation failed for " + constructor.getName(), exception);
+            throw new IllegalStateException("Instance creation failed for " + constructor.getName(), exception);
         }
     }
 
-    public static Object createInstance(Method method, Object object) {
+    public static Object createInstance(Method method, Object object, Object... parameters) {
         try {
-            return method.invoke(object);
+            return method.invoke(object, parameters);
         } catch (Exception exception) {
-            throw new IllegalStateException("Bean creation failed for " + method.getReturnType().getName(), exception);
+            throw new IllegalStateException("Instance creation failed for " + method.getReturnType().getName(), exception);
         }
     }
 }

@@ -19,10 +19,10 @@ public class SetterInjector implements Injector {
     public void inject(final Object bean) {
         Class<?> beanType = bean.getClass();
         getInjectedSetters(beanType)
-            .forEach(method -> injectSetter(method, bean, beanFactory.getInjectedBeans(method.getParameterTypes())));
+            .forEach(method -> injectSetter(method, bean, beanFactory.getBeans(method.getParameterTypes())));
     }
 
-    private static void injectSetter(final Method method, final Object bean, final Object... value) {
+    private void injectSetter(final Method method, final Object bean, final Object... value) {
         try {
             method.invoke(bean, value);
         } catch (IllegalAccessException | InvocationTargetException e) {
@@ -30,7 +30,7 @@ public class SetterInjector implements Injector {
         }
     }
 
-    private static Stream<Method> getInjectedSetters(final Class<?> clazz) {
+    private Stream<Method> getInjectedSetters(final Class<?> clazz) {
         return Arrays.stream(clazz.getMethods())
             .filter(field -> field.isAnnotationPresent(Inject.class));
     }
