@@ -8,13 +8,13 @@ import org.reflections.util.FilterBuilder;
 import java.lang.annotation.Annotation;
 import java.util.Set;
 
-public abstract class AbstractBeanScanner implements BeanScanner {
+public abstract class AbstractBeanDefinitionScanner implements BeanDefinitionScanner {
 
     private final Reflections reflections;
 
     protected final BeanDefinitionRegistry beanDefinitionRegistry;
 
-    public AbstractBeanScanner(String basePackage, BeanDefinitionRegistry beanDefinitionRegistry) {
+    public AbstractBeanDefinitionScanner(String basePackage, BeanDefinitionRegistry beanDefinitionRegistry) {
         this.reflections = new Reflections(
             new ConfigurationBuilder()
                 .forPackages(basePackage)

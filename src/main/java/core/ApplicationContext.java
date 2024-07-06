@@ -1,9 +1,9 @@
 package core;
 
-import core.bean.AnnotatedBeanScanner;
+import core.bean.AnnotatedBeanDefinitionScanner;
 import core.bean.BeanFactory;
-import core.bean.BeanScanner;
-import core.bean.ClasspathBeanScanner;
+import core.bean.BeanDefinitionScanner;
+import core.bean.ClasspathBeanDefinitionScanner;
 
 import java.util.List;
 import java.util.Set;
@@ -12,19 +12,19 @@ public class ApplicationContext {
 
     private final BeanFactory beanFactory;
 
-    private final List<BeanScanner> beanScanners;
+    private final List<BeanDefinitionScanner> scanners;
 
     public ApplicationContext(String basePackage) {
         this.beanFactory = new BeanFactory();
-        this.beanScanners = List.of(
-            new AnnotatedBeanScanner(basePackage, beanFactory),
-            new ClasspathBeanScanner(basePackage, beanFactory)
+        this.scanners = List.of(
+            new AnnotatedBeanDefinitionScanner(basePackage, beanFactory),
+            new ClasspathBeanDefinitionScanner(basePackage, beanFactory)
         );
         initialize();
     }
 
     private void initialize() {
-        beanScanners.forEach(BeanScanner::scan);
+        scanners.forEach(BeanDefinitionScanner::scan);
         beanFactory.initialize();
     }
 

@@ -6,9 +6,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ClasspathBeanScanner extends AbstractBeanScanner {
+public class ClasspathBeanDefinitionScanner extends AbstractBeanDefinitionScanner {
 
-    public ClasspathBeanScanner(String basePackage, BeanDefinitionRegistry beanDefinitionRegistry) {
+    public ClasspathBeanDefinitionScanner(String basePackage, BeanDefinitionRegistry beanDefinitionRegistry) {
         super(basePackage, beanDefinitionRegistry);
     }
 

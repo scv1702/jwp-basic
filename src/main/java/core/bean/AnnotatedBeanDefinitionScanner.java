@@ -7,9 +7,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-public class AnnotatedBeanScanner extends AbstractBeanScanner {
+public class AnnotatedBeanDefinitionScanner extends AbstractBeanDefinitionScanner {
 
-    public AnnotatedBeanScanner(String basePackage, BeanDefinitionRegistry beanDefinitionRegistry) {
+    public AnnotatedBeanDefinitionScanner(String basePackage, BeanDefinitionRegistry beanDefinitionRegistry) {
         super(basePackage, beanDefinitionRegistry);
     }
 

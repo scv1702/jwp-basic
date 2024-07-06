@@ -12,14 +12,14 @@ class DependencyInjectionTest {
 
 
     private final BeanFactory beanFactory = new BeanFactory();
-    private final List<BeanScanner> scanners = List.of(
-        new ClasspathBeanScanner("core.bean.example", beanFactory),
-        new AnnotatedBeanScanner("core.bean.example", beanFactory)
+    private final List<BeanDefinitionScanner> scanners = List.of(
+        new ClasspathBeanDefinitionScanner("core.bean.example", beanFactory),
+        new AnnotatedBeanDefinitionScanner("core.bean.example", beanFactory)
     );
 
     @BeforeEach
     void setUp() {
-        scanners.forEach(BeanScanner::scan);
+        scanners.forEach(BeanDefinitionScanner::scan);
         beanFactory.initialize();
     }
 
