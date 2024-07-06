@@ -2,6 +2,7 @@ package core.bean;
 
 import lombok.extern.slf4j.Slf4j;
 
+import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -62,6 +63,7 @@ public class BeanFactory implements BeanDefinitionRegistry {
         final Object bean = beanDefinition.createBean(injectedBeans);
         injectors.forEach(injector -> injector.inject(bean));
         beans.put(beanType, bean);
+        doPostConstruct(bean);
         return bean;
     }
 
@@ -70,5 +72,17 @@ public class BeanFactory implements BeanDefinitionRegistry {
             .filter(clazz::isAssignableFrom)
             .findFirst()
             .orElse(null);
+    }
+
+    private void doPostConstruct(Object bean) {
+        Arrays.stream(bean.getClass().getMethods())
+            .filter(method -> method.isAnnotationPresent(PostConstruct.class))
+            .forEach(method -> {
+                try {
+                    method.invoke(bean);
+                } catch (Exception e) {
+                    throw new IllegalStateException("Failed to invoke PostConstruct method", e);
+                }
+            });
     }
 }

@@ -1,6 +1,5 @@
 package core.jdbc;
 
-import core.bean.annotations.Component;
 import core.jdbc.annotations.GeneratedValue;
 import core.jdbc.annotations.Id;
 import core.jdbc.converter.IntegerConverter;
@@ -9,6 +8,7 @@ import core.jdbc.converter.LongConverter;
 import core.jdbc.converter.PropertyConverter;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.sql.DataSource;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,14 +18,20 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
-@Component
 public class JdbcTemplate {
+
     private static final Map<Class<?>, PropertyConverter> converters = new HashMap<>();
+
+    private final DataSource dataSource;
 
     static {
         converters.put(Integer.class, new IntegerConverter());
         converters.put(Long.class, new LongConverter());
         converters.put(LocalDateTime.class, new LocalDateTimeConverter());
+    }
+
+    public JdbcTemplate(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @SuppressWarnings("unchecked")
@@ -63,7 +69,7 @@ public class JdbcTemplate {
     }
 
     private Object execute(String sql, Object... args) {
-        try (Connection con = ConnectionManager.getConnection();
+        try (Connection con = dataSource.getConnection();
              PreparedStatement pstmt = createPreparedStatement(con, sql, args)) {
             pstmt.executeUpdate();
             ResultSet rs = pstmt.getGeneratedKeys();
@@ -104,7 +110,7 @@ public class JdbcTemplate {
 
     public <T> List<T> select(Class<T> clazz, String sql, Object... args) {
         List<T> result = new ArrayList<>();
-        try (Connection con = ConnectionManager.getConnection();
+        try (Connection con = dataSource.getConnection();
              PreparedStatement pstmt = createPreparedStatement(con, sql, args);
              ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
@@ -119,7 +125,7 @@ public class JdbcTemplate {
 
     public <T> List<T> select(String sql, RowMapper<T> rowMapper, Object... args) {
         List<T> result = new ArrayList<>();
-        try (Connection con = ConnectionManager.getConnection();
+        try (Connection con = dataSource.getConnection();
              PreparedStatement pstmt = createPreparedStatement(con, sql, args);
              ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
@@ -135,7 +141,7 @@ public class JdbcTemplate {
     }
 
     public <T> Optional<T> selectOne(Class<T> clazz, String sql, Object... args) {
-        try (Connection con = ConnectionManager.getConnection();
+        try (Connection con = dataSource.getConnection();
              PreparedStatement pstmt = createPreparedStatement(con, sql, args);
              ResultSet rs = pstmt.executeQuery()) {
             if (rs.next()) {
@@ -148,7 +154,7 @@ public class JdbcTemplate {
     }
 
     public <T> Optional<T> selectOne(String sql, RowMapper<T> rowMapper, Object... args) {
-        try (Connection con = ConnectionManager.getConnection();
+        try (Connection con = dataSource.getConnection();
              PreparedStatement pstmt = createPreparedStatement(con, sql, args);
              ResultSet rs = pstmt.executeQuery()) {
             if (rs.next()) {
@@ -163,7 +169,7 @@ public class JdbcTemplate {
     }
 
     public void delete(String sql, Object... args) {
-        try (Connection con = ConnectionManager.getConnection();
+        try (Connection con = dataSource.getConnection();
              PreparedStatement pstmt = createPreparedStatement(con, sql, args)) {
             int result = pstmt.executeUpdate();
             if (result == 0) {
