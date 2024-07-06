@@ -4,6 +4,8 @@ import core.web.DispatcherServlet;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.startup.Tomcat;
+import org.springframework.core.io.ClassPathResource;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 
@@ -11,17 +13,25 @@ import java.io.File;
 public class ApplicationLauncher {
 
     public static void launch(Class<?> clazz) throws Exception {
-        String webappDirLocation = "webapp";
+        final Yaml yaml = new Yaml();
 
-        Tomcat tomcat = new Tomcat();
-        tomcat.setPort(58080);
+        final ApplicationProperties properties = yaml.loadAs(
+            new ClassPathResource("application.yml").getInputStream(),
+            ApplicationProperties.class
+        );
+        final String webappDirLocation = properties.getWebapp();
+        final String contextPath = properties.getContextPath();
+        final int port = properties.getPort();
 
-        tomcat.addWebapp("", new File(webappDirLocation).getAbsolutePath());
+        final Tomcat tomcat = new Tomcat();
+        tomcat.setPort(port);
+
+        tomcat.addWebapp(contextPath, new File(webappDirLocation).getAbsolutePath());
         log.info("Configuring application with basedir: {}", new File(webappDirLocation).getAbsolutePath());
 
-        ApplicationContext ac = new ApplicationContext(clazz.getPackageName());
+        final ApplicationContext ac = new ApplicationContext(clazz.getPackageName());
 
-        Wrapper dispatcher = tomcat.addServlet("", "dispatcher", new DispatcherServlet(ac));
+        final Wrapper dispatcher = tomcat.addServlet(contextPath, "dispatcher", new DispatcherServlet(ac));
         dispatcher.addMapping("/");
         dispatcher.setLoadOnStartup(1);
 
