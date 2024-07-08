@@ -7,6 +7,4 @@ public interface Handler {
     Object handle(Object[] args) throws Exception;
 
     Method getMethod();
-
-    boolean hasResponseBody();
 }

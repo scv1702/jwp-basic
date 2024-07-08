@@ -32,8 +32,8 @@ public class DispatcherServlet extends HttpServlet {
     @Override
     public void service(HttpServletRequest req, HttpServletResponse res) throws RuntimeException {
         try {
-            Handler handler = handlerMapping.getHandler(req);
-            ModelAndView modelAndView = handlerAdaptor.handle(req, res, handler);
+            final Handler handler = handlerMapping.getHandler(req);
+            final ModelAndView modelAndView = handlerAdaptor.handle(req, res, handler);
             render(modelAndView, req, res);
         } catch (Exception e) {
             log.error("Failed to service", e);
@@ -46,18 +46,24 @@ public class DispatcherServlet extends HttpServlet {
             return ;
         }
 
-        View view = modelAndView.getView();
-        if (view == null) {
-            String viewName = modelAndView.getViewName();
-            if (viewName != null) {
-                view = viewResolver.resolveViewName(modelAndView.getViewName());
-            }
-        }
-
+        View view = resolveView(modelAndView);
         if (view == null) {
             return ;
         }
 
         view.render(modelAndView.getModel(), req, res);
+    }
+
+    private View resolveView(ModelAndView modelAndView) {
+        if (modelAndView.getView() != null) {
+            return modelAndView.getView();
+        }
+
+        String viewName = modelAndView.getViewName();
+        if (viewName == null) {
+            return null;
+        }
+
+        return viewResolver.resolveViewName(viewName);
     }
 }
